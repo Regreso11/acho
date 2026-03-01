@@ -1,0 +1,1414 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1020" />
+  <link rel="manifest" href="./manifest.webmanifest">
+  <title>Espacio de Estudio — Flashcards</title>
+
+  <style>
+    :root{
+      --bg: #0b1020;
+      --stroke: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --accent: #7c3aed;
+      --good:#22c55e;
+      --danger:#ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --r: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 420px at 15% 10%, rgba(124,58,237,.30), transparent 60%),
+        radial-gradient(900px 420px at 85% 20%, rgba(34,197,94,.22), transparent 55%),
+        radial-gradient(1100px 700px at 50% 115%, rgba(59,130,246,.18), transparent 55%),
+        var(--bg);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .shell{ width:min(1000px, 100%); display:grid; gap:14px; }
+
+    .bar{
+      background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      border:1px solid var(--stroke);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      backdrop-filter: blur(10px);
+    }
+    .brand{ display:flex; flex-direction:column; gap:2px; min-width: 210px; }
+    .brand .h{ font-size:14px; letter-spacing:.02em; font-weight:900; }
+    .brand .s{ font-size:12px; color:var(--muted); }
+
+    .actions{ display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      border-radius: 14px;
+      padding:10px 12px;
+      font-weight:900;
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{ background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.22); }
+    .btn:active{ transform: scale(.99); }
+    .btn.primary{ background: rgba(124,58,237,.36); border-color: rgba(124,58,237,.55); }
+    .btn.good{ background: rgba(34,197,94,.24); border-color: rgba(34,197,94,.55); }
+    .btn.danger{ background: rgba(239,68,68,.20); border-color: rgba(239,68,68,.55); }
+    .btn.flat{ background: transparent; }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border:1px solid var(--stroke);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding:14px;
+      backdrop-filter: blur(10px);
+    }
+
+    .welcome{ text-align:center; padding: 22px 14px 18px; }
+    .welcome h1{ margin: 0 0 8px; font-size: clamp(30px, 4vw, 46px); letter-spacing:-.02em; }
+    .welcome p{
+      margin: 0 auto 16px;
+      max-width: 60ch;
+      color: var(--muted);
+      line-height:1.45;
+      font-size: 14px;
+    }
+    .row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+
+    .study{ display:none; gap:14px; }
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .tag{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      font-weight:900;
+      color: var(--muted);
+    }
+    .tag strong{ color: var(--text); }
+
+    .cardbox{
+      border-radius: var(--r);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      overflow:hidden;
+    }
+    .face{ padding: 16px; display:grid; gap:10px; }
+    .face h2{
+      margin:0;
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color: var(--muted);
+    }
+    .paper{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.07);
+      padding: 14px;
+      min-height: 160px;
+      max-height: 42vh;
+      overflow:auto;
+      white-space: pre-wrap;
+      line-height: 1.55;
+      font-size: clamp(16px, 2.2vw, 20px);
+    }
+    .answerBox{
+      display:none;
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.09);
+    }
+
+    /* Exam area */
+    .examArea{
+      display:none;
+      padding: 0 16px 16px;
+      gap:10px;
+    }
+    .examArea textarea{
+      width:100%;
+      min-height: 120px;
+      resize: vertical;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 12px;
+      outline:none;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+    .examArea textarea:focus{
+      border-color: rgba(124,58,237,.65);
+      box-shadow: 0 0 0 4px rgba(124,58,237,.18);
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      gap:10px;
+      margin-top: 6px;
+    }
+    .controls .left, .controls .right{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      line-height:1.35;
+    }
+
+    dialog{
+      border:0; padding:0; border-radius: 20px;
+      width: min(900px, 94vw);
+      box-shadow: var(--shadow);
+      background: #0b1020;
+      color: var(--text);
+      border:1px solid rgba(255,255,255,.16);
+      overflow:hidden;
+    }
+    dialog::backdrop{ background: rgba(0,0,0,.55); }
+    .dlg{ padding: 14px; display:grid; gap:10px; }
+    .dlg .head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .dlg .head h3{ margin:0; font-size:16px; letter-spacing:.01em; }
+    .dlg label{
+      display:block; font-size:12px; letter-spacing:.08em;
+      text-transform:uppercase; color: var(--muted);
+      margin-bottom:6px; font-weight:900;
+    }
+    .dlg textarea, .dlg input{
+      width:100%;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 12px;
+      outline:none;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+    .dlg textarea{ min-height: 130px; resize: vertical; }
+    .dlg .row{ display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin-top: 2px; }
+
+    .deckList{ display:grid; gap:8px; max-height: 52vh; overflow:auto; padding-right:2px; }
+    .deckItem{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .deckItem .name{ display:flex; flex-direction:column; gap:2px; min-width: 220px; }
+    .deckItem .name strong{ font-size: 14px; }
+    .deckItem .name span{ font-size: 12px; color: var(--muted); }
+    .deckItem .ops{ display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+
+    /* Summary dialog content */
+    .summaryWrap{
+      padding: 14px;
+      max-height: 82vh;
+      overflow:auto; /* aquí obligamos el scroll */
+      display:grid;
+      gap:12px;
+    }
+    .summaryStats{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .chip{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size:12px;
+      font-weight:900;
+      color: var(--muted);
+    }
+    .chip b{ color: var(--text); }
+    .resultList{
+      display:grid;
+      gap:10px;
+    }
+    .resultItem{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 12px;
+      display:grid;
+      gap:8px;
+    }
+    .badgeGood{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(34,197,94,.50);
+      background: rgba(34,197,94,.18);
+      font-size:12px;
+      font-weight:900;
+      width:max-content;
+    }
+    .badgeBad{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(239,68,68,.55);
+      background: rgba(239,68,68,.18);
+      font-size:12px;
+      font-weight:900;
+      width:max-content;
+    }
+    .smallMuted{ color: var(--muted); font-size:12px; line-height:1.35; white-space: pre-wrap; }
+    .qTitle{ font-weight:900; white-space: pre-wrap; }
+    .divider{ height:1px; background: rgba(255,255,255,.12); }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      padding: 10px 14px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.55);
+      color: rgba(255,255,255,.92);
+      font-size: 13px;
+      font-weight: 900;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .25s ease, transform .25s ease;
+      backdrop-filter: blur(8px);
+    }
+    .toast.on{ opacity:1; transform: translateX(-50%) translateY(-4px); }
+
+    @media (max-width:520px){
+      .brand{min-width: unset;}
+      .paper{ max-height: 38vh; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <div class="bar" id="topBar" style="display:none;">
+      <div class="brand">
+        <div class="h">Espacio de Estudio</div>
+        <div class="s" id="statusLine">Listo</div>
+      </div>
+      <div class="actions">
+        <button class="btn flat" id="decksBtn" title="Paquetes / Mazos">📦 Mazos</button>
+        <button class="btn primary" id="examToggleBtn" title="Modo examen">🧪 Examen</button>
+        <button class="btn" id="exportAllBtn" title="Exportar todo">⬇️ Exportar todo</button>
+        <label class="btn" title="Importar todo">
+          ⬆️ Importar todo
+          <input type="file" id="importAllInput" accept="application/json" hidden>
+        </label>
+        <button class="btn danger flat" id="wipeBtn" title="Borrar TODO del navegador">🧨 Borrar todo</button>
+      </div>
+    </div>
+
+    <section class="panel welcome" id="welcomeView">
+      <h1>Tu espacio de estudio</h1>
+      <p>
+        Mazos por tema. Offline. Minimalista.
+        Ahora: <b>Modo Examen</b> estricto con “La sé / No la sé” y <b>resumen obligatorio</b>.
+      </p>
+
+      <div class="row">
+        <button class="btn primary" id="enterBtn">🚀 Empezar</button>
+        <button class="btn" id="quickDeckBtn">➕ Crear primer mazo</button>
+      </div>
+
+      <div class="hint" style="margin-top:12px;">
+        Android: ideal abrirlo desde un link HTTPS (GitHub Pages/Netlify) para poder “Instalar app”.
+      </div>
+    </section>
+
+    <section class="study" id="studyView">
+      <div class="panel">
+        <div class="meta">
+          <div class="tag" id="deckTag"><strong>Mazo:</strong> —</div>
+          <div class="tag" id="modeTag"><strong>Modo:</strong> Repaso</div>
+          <div class="tag" id="progressTag"><strong>Progreso:</strong> 0/0</div>
+        </div>
+
+        <div class="cardbox">
+          <div class="face">
+            <h2>Pregunta</h2>
+            <div class="paper" id="qArea"></div>
+          </div>
+
+          <div class="face" style="padding-top:0;">
+            <h2>Respuesta</h2>
+            <div class="paper answerBox" id="aArea"></div>
+          </div>
+
+          <!-- Exam: user answer + strict buttons -->
+          <div class="examArea" id="examArea">
+            <div class="hint"><b>Examen:</b> escribe tu respuesta y revela para comparar. Debes marcar “La sé” o “No la sé” para continuar.</div>
+            <textarea id="userAnswer" placeholder="Escribe tu respuesta aquí..."></textarea>
+            <div class="row" style="justify-content:flex-start;">
+              <button class="btn" id="revealCompareBtn">🔎 Revelar / Comparar</button>
+              <button class="btn good" id="knowBtn" style="display:none;">✅ La sé</button>
+              <button class="btn danger" id="dontKnowBtn" style="display:none;">❌ No la sé</button>
+              <button class="btn flat" id="exitExamBtn" style="display:none;">⛔ Salir del examen</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="left">
+            <button class="btn" id="prevBtn">⬅️ Anterior</button>
+            <button class="btn primary" id="nextBtn">Siguiente ➡️</button>
+            <button class="btn" id="mixBtn">🔀 Mezclar</button>
+          </div>
+          <div class="right">
+            <button class="btn good" id="revealBtn">👁️ Mostrar</button>
+            <button class="btn" id="newCardBtn">➕ Nueva tarjeta</button>
+            <button class="btn" id="editCardBtn">✏️ Editar</button>
+            <button class="btn danger" id="removeCardBtn">🗑️ Borrar</button>
+            <button class="btn" id="exportDeckBtn">⬇️ Exportar mazo</button>
+            <label class="btn" title="Importar en este mazo">
+              ⬆️ Importar mazo
+              <input type="file" id="importDeckInput" accept="application/json" hidden>
+            </label>
+          </div>
+        </div>
+
+        <div class="hint">
+          Repaso: <b>Espacio</b> mostrar/ocultar • <b>←/→</b> anterior/siguiente • <b>M</b> mezclar
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Dialog: New/Edit Card -->
+  <dialog id="cardDialog">
+    <div class="dlg">
+      <div class="head">
+        <h3 id="cardDialogTitle">Nueva tarjeta</h3>
+        <button class="btn flat" id="closeCardDlg">✖</button>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="cardQ">Pregunta</label>
+          <textarea id="cardQ" placeholder="Escribe la pregunta (larga, con listas, fórmulas, ejemplos...)"></textarea>
+        </div>
+        <div>
+          <label for="cardA">Respuesta</label>
+          <textarea id="cardA" placeholder="Escribe la respuesta completa..."></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn" id="cancelCardDlg">Cancelar</button>
+        <button class="btn primary" id="saveCardDlg">Guardar</button>
+      </div>
+
+      <div class="hint">Tip: texto largo + saltos de línea = perfecto.</div>
+    </div>
+  </dialog>
+
+  <!-- Dialog: Deck Manager -->
+  <dialog id="deckDialog">
+    <div class="dlg">
+      <div class="head">
+        <h3>📦 Mazos (paquetes de flashcards)</h3>
+        <button class="btn flat" id="closeDeckDlg">✖</button>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="newDeckName">Crear mazo nuevo</label>
+          <input id="newDeckName" placeholder="Ej: Ciencia • Historia • Inglés • Cálculo..." />
+          <div class="row" style="justify-content:flex-start;">
+            <button class="btn primary" id="createDeckBtn">➕ Crear mazo</button>
+          </div>
+        </div>
+
+        <div>
+          <label>Mis mazos</label>
+          <div class="deckList" id="deckList"></div>
+        </div>
+      </div>
+
+      <div class="hint">Cada mazo es independiente. Puedes exportar/importar por mazo o todo junto.</div>
+    </div>
+  </dialog>
+
+  <!-- Dialog: Exam Summary (obligatorio) -->
+  <dialog id="summaryDialog">
+    <div class="summaryWrap" id="summaryWrap">
+      <div class="dlg head" style="padding:0;">
+        <div>
+          <h3 style="margin:0;">📜 Resumen del Examen</h3>
+          <div class="hint" id="summarySubtitle">—</div>
+        </div>
+      </div>
+
+      <div class="summaryStats" id="summaryStats"></div>
+
+      <div class="divider"></div>
+
+      <div class="hint"><b>Tarjetas del examen:</b> aquí verás cada tarjeta y tu resultado. Para salir, baja hasta el final.</div>
+      <div class="resultList" id="resultList"></div>
+
+      <div class="divider"></div>
+
+      <!-- Botones al FINAL para obligar scroll -->
+      <div class="row" style="justify-content:flex-end;">
+        <button class="btn" id="resumeStudyBtn">📚 Seguir repasando</button>
+        <button class="btn primary" id="anotherExamBtn">🧪 Otro examen</button>
+      </div>
+
+      <div class="hint">Fin del resumen. (Sí: esto es intencionalmente estricto).</div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /**************************************************************
+     * CONFIGURACIÓN (EDITABLE POR TI)
+     **************************************************************/
+    const STORE_KEY = "es_estudio_decks_v3";
+    const MIN_EXAM_CARDS = 10;          // <-- cambia este número cuando quieras
+    const SHUFFLE_STYLE = "random";     // "random" | "riffle"
+
+    /**************************************************************
+     * UTILIDADES
+     **************************************************************/
+    const ui = {
+      topBar: document.getElementById("topBar"),
+      welcomeView: document.getElementById("welcomeView"),
+      studyView: document.getElementById("studyView"),
+
+      enterBtn: document.getElementById("enterBtn"),
+      quickDeckBtn: document.getElementById("quickDeckBtn"),
+
+      statusLine: document.getElementById("statusLine"),
+      deckTag: document.getElementById("deckTag"),
+      modeTag: document.getElementById("modeTag"),
+      progressTag: document.getElementById("progressTag"),
+      qArea: document.getElementById("qArea"),
+      aArea: document.getElementById("aArea"),
+
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      mixBtn: document.getElementById("mixBtn"),
+      revealBtn: document.getElementById("revealBtn"),
+      newCardBtn: document.getElementById("newCardBtn"),
+      editCardBtn: document.getElementById("editCardBtn"),
+      removeCardBtn: document.getElementById("removeCardBtn"),
+
+      decksBtn: document.getElementById("decksBtn"),
+      examToggleBtn: document.getElementById("examToggleBtn"),
+      exportDeckBtn: document.getElementById("exportDeckBtn"),
+      importDeckInput: document.getElementById("importDeckInput"),
+      exportAllBtn: document.getElementById("exportAllBtn"),
+      importAllInput: document.getElementById("importAllInput"),
+      wipeBtn: document.getElementById("wipeBtn"),
+
+      // Exam widgets
+      examArea: document.getElementById("examArea"),
+      userAnswer: document.getElementById("userAnswer"),
+      revealCompareBtn: document.getElementById("revealCompareBtn"),
+      knowBtn: document.getElementById("knowBtn"),
+      dontKnowBtn: document.getElementById("dontKnowBtn"),
+      exitExamBtn: document.getElementById("exitExamBtn"),
+
+      // Summary
+      summaryDialog: document.getElementById("summaryDialog"),
+      summaryWrap: document.getElementById("summaryWrap"),
+      summarySubtitle: document.getElementById("summarySubtitle"),
+      summaryStats: document.getElementById("summaryStats"),
+      resultList: document.getElementById("resultList"),
+      resumeStudyBtn: document.getElementById("resumeStudyBtn"),
+      anotherExamBtn: document.getElementById("anotherExamBtn"),
+
+      toast: document.getElementById("toast"),
+
+      // dialogs
+      cardDialog: document.getElementById("cardDialog"),
+      cardDialogTitle: document.getElementById("cardDialogTitle"),
+      cardQ: document.getElementById("cardQ"),
+      cardA: document.getElementById("cardA"),
+      closeCardDlg: document.getElementById("closeCardDlg"),
+      cancelCardDlg: document.getElementById("cancelCardDlg"),
+      saveCardDlg: document.getElementById("saveCardDlg"),
+
+      deckDialog: document.getElementById("deckDialog"),
+      closeDeckDlg: document.getElementById("closeDeckDlg"),
+      newDeckName: document.getElementById("newDeckName"),
+      createDeckBtn: document.getElementById("createDeckBtn"),
+      deckList: document.getElementById("deckList"),
+    };
+
+    const app = {
+      data: { activeDeckId: null, decks: [] },
+      view: {
+        index: 0,
+        answerVisible: false,
+        editMode: "new",        // card dialog: "new"|"edit"
+        mode: "study",          // "study"|"exam"
+        examQueue: [],          // array of card IDs in exam order
+        examPos: 0,             // current position in examQueue (no UI counter)
+        examRevealed: false,    // true after reveal/compare; must choose know/dontknow
+        examLog: [],            // [{cardId, verdict:"know"|"dont", userAnswer, at}]
+        examStartedAt: null,
+        examEndedEarly: false
+      }
+    };
+
+    function uid(){
+      return Math.random().toString(16).slice(2) + Date.now().toString(16);
+    }
+
+    function toast(msg){
+      ui.toast.textContent = msg;
+      ui.toast.classList.add("on");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(()=> ui.toast.classList.remove("on"), 1500);
+    }
+
+    function saveStore(){
+      localStorage.setItem(STORE_KEY, JSON.stringify(app.data));
+    }
+
+    function loadStore(){
+      try{
+        const raw = localStorage.getItem(STORE_KEY);
+        if(!raw) return;
+        const parsed = JSON.parse(raw);
+        if(parsed && typeof parsed === "object" && Array.isArray(parsed.decks)){
+          app.data = parsed;
+        }
+      }catch(err){
+        console.warn("No se pudo cargar:", err);
+      }
+    }
+
+    function getDeck(){
+      return app.data.decks.find(d => d.id === app.data.activeDeckId) || null;
+    }
+
+    function ensureDeck(){
+      if(!app.data.decks.length){
+        const d = { id: uid(), name: "Mi primer mazo", cards: [] };
+        app.data.decks.push(d);
+        app.data.activeDeckId = d.id;
+        saveStore();
+      }
+      if(!app.data.activeDeckId){
+        app.data.activeDeckId = app.data.decks[0].id;
+      }
+    }
+
+    function clampIndex(){
+      const deck = getDeck();
+      const n = deck ? deck.cards.length : 0;
+      if(n === 0){ app.view.index = 0; return; }
+      if(app.view.index < 0) app.view.index = n - 1;
+      if(app.view.index >= n) app.view.index = 0;
+    }
+
+    function setAnswerVisible(on){
+      app.view.answerVisible = on;
+      if(on){
+        ui.aArea.style.display = "block";
+        ui.aArea.classList.add("answerBox");
+        ui.revealBtn.textContent = "🙈 Ocultar";
+      }else{
+        ui.aArea.style.display = "none";
+        ui.revealBtn.textContent = "👁️ Mostrar";
+      }
+    }
+
+    /**************************************************************
+     * SHUFFLES
+     **************************************************************/
+    function shuffleRandom(arr){
+      for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function shuffleRiffle(arr, rounds = 5){
+      let a = arr.slice();
+      for(let r=0; r<rounds; r++){
+        const cut = Math.floor(a.length * (0.45 + Math.random()*0.1));
+        let left = a.slice(0, cut);
+        let right = a.slice(cut);
+        const out = [];
+        while(left.length || right.length){
+          const pickLeft = (Math.random() < (left.length / (left.length + right.length)));
+          if(pickLeft && left.length) out.push(left.shift());
+          else if(right.length) out.push(right.shift());
+          else out.push(left.shift());
+        }
+        a = out;
+      }
+      return a;
+    }
+
+    function makeShuffledIds(cards){
+      const ids = cards.map(c => c.id);
+      if(SHUFFLE_STYLE === "riffle") return shuffleRiffle(ids);
+      return shuffleRandom(ids);
+    }
+
+    /**************************************************************
+     * NORMALIZAR TARJETA (stats invisibles)
+     **************************************************************/
+    function normalizeCard(card){
+      if(!card.stats) card.stats = { know:0, dont:0 };
+      if(typeof card.stats.know !== "number") card.stats.know = Number(card.stats.know||0);
+      if(typeof card.stats.dont !== "number") card.stats.dont = Number(card.stats.dont||0);
+      return card;
+    }
+
+    /**************************************************************
+     * RENDER
+     **************************************************************/
+    function render(){
+      const deck = getDeck();
+      const countDecks = app.data.decks.length;
+      const countCards = deck ? deck.cards.length : 0;
+
+      ui.statusLine.textContent = `${countDecks} mazo(s) • ${countCards} tarjeta(s) • Offline`;
+      ui.deckTag.innerHTML = `<strong>Mazo:</strong> ${deck ? deck.name : "—"}`;
+
+      const isExam = app.view.mode === "exam";
+      ui.modeTag.innerHTML = `<strong>Modo:</strong> ${isExam ? "Examen" : "Repaso"}`;
+
+      // UI toggles for exam/study
+      ui.examArea.style.display = isExam ? "grid" : "none";
+      ui.exitExamBtn.style.display = isExam ? "inline-flex" : "none";
+
+      ui.revealBtn.style.display = isExam ? "none" : "inline-flex";
+      ui.prevBtn.style.display = isExam ? "none" : "inline-flex";
+      ui.mixBtn.style.display = isExam ? "none" : "inline-flex";
+      ui.progressTag.style.display = isExam ? "none" : "inline-flex"; // sin contador en examen
+
+      ui.examToggleBtn.textContent = isExam ? "⛔ Salir examen" : "🧪 Examen";
+
+      if(!deck || deck.cards.length === 0){
+        ui.qArea.textContent = "No hay tarjetas en este mazo.\n\nPulsa “Nueva tarjeta” para crear la primera.";
+        ui.aArea.textContent = "";
+        ui.progressTag.innerHTML = `<strong>Progreso:</strong> 0/0`;
+        setAnswerVisible(false);
+        resetExamWidgets();
+        return;
+      }
+
+      if(!isExam){
+        clampIndex();
+        const card = normalizeCard(deck.cards[app.view.index]);
+        ui.qArea.textContent = card.q || "(sin pregunta)";
+        ui.aArea.textContent = card.a || "(sin respuesta)";
+        ui.progressTag.innerHTML = `<strong>Progreso:</strong> ${app.view.index + 1}/${deck.cards.length}`;
+        setAnswerVisible(false);
+        resetExamWidgets();
+        return;
+      }
+
+      // EXAM MODE
+      deck.cards = deck.cards.map(normalizeCard);
+      const cid = app.view.examQueue[app.view.examPos];
+      const card = deck.cards.find(c => c.id === cid) || deck.cards[0];
+      ui.qArea.textContent = card.q || "(sin pregunta)";
+      ui.aArea.textContent = card.a || "(sin respuesta)";
+
+      ui.aArea.style.display = app.view.examRevealed ? "block" : "none";
+      ui.aArea.classList.add("answerBox");
+    }
+
+    function resetExamWidgets(){
+      app.view.examRevealed = false;
+      ui.userAnswer.value = "";
+      ui.knowBtn.style.display = "none";
+      ui.dontKnowBtn.style.display = "none";
+      ui.revealCompareBtn.disabled = false;
+    }
+
+    /**************************************************************
+     * APP FLOW
+     **************************************************************/
+    function showApp(){
+      ui.welcomeView.style.display = "none";
+      ui.studyView.style.display = "grid";
+      ui.topBar.style.display = "flex";
+      render();
+      toast("📚 Listo");
+    }
+
+    /**************************************************************
+     * DECK MANAGER
+     **************************************************************/
+    function openDecks(){
+      refreshDeckList();
+      ui.deckDialog.showModal();
+      setTimeout(() => ui.newDeckName.focus(), 50);
+    }
+
+    function refreshDeckList(){
+      ui.deckList.innerHTML = "";
+      const decks = app.data.decks.slice();
+      if(!decks.length){
+        const empty = document.createElement("div");
+        empty.className = "hint";
+        empty.textContent = "Aún no tienes mazos. Crea uno arriba.";
+        ui.deckList.appendChild(empty);
+        return;
+      }
+
+      decks.forEach(d => {
+        const item = document.createElement("div");
+        item.className = "deckItem";
+
+        const left = document.createElement("div");
+        left.className = "name";
+        const title = document.createElement("strong");
+        title.textContent = d.name;
+        const meta = document.createElement("span");
+        meta.textContent = `${(d.cards||[]).length} tarjeta(s)`;
+        left.appendChild(title);
+        left.appendChild(meta);
+
+        const ops = document.createElement("div");
+        ops.className = "ops";
+
+        const useBtn = document.createElement("button");
+        useBtn.className = "btn good";
+        useBtn.textContent = (d.id === app.data.activeDeckId) ? "✅ En uso" : "Usar";
+        useBtn.disabled = (d.id === app.data.activeDeckId);
+        useBtn.addEventListener("click", () => {
+          app.data.activeDeckId = d.id;
+          app.view.index = 0;
+          exitExam(true); // salir del examen (si estaba) y limpiar
+          saveStore();
+          ui.deckDialog.close();
+          render();
+          toast("📦 Mazo cambiado");
+        });
+
+        const renameBtn = document.createElement("button");
+        renameBtn.className = "btn";
+        renameBtn.textContent = "✏️ Renombrar";
+        renameBtn.addEventListener("click", () => {
+          const name = prompt("Nuevo nombre del mazo:", d.name);
+          if(!name) return;
+          d.name = name.trim();
+          saveStore();
+          refreshDeckList();
+          render();
+          toast("✏️ Renombrado");
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "btn danger";
+        delBtn.textContent = "🗑️ Borrar";
+        delBtn.addEventListener("click", () => {
+          if(!confirm(`¿Borrar el mazo “${d.name}”? Esto elimina sus ${(d.cards||[]).length} tarjeta(s).`)) return;
+          app.data.decks = app.data.decks.filter(x => x.id !== d.id);
+          if(app.data.activeDeckId === d.id){
+            app.data.activeDeckId = app.data.decks[0]?.id || null;
+            app.view.index = 0;
+            exitExam(true);
+          }
+          saveStore();
+          refreshDeckList();
+          render();
+          toast("🗑️ Mazo borrado");
+        });
+
+        ops.appendChild(useBtn);
+        ops.appendChild(renameBtn);
+        ops.appendChild(delBtn);
+
+        item.appendChild(left);
+        item.appendChild(ops);
+        ui.deckList.appendChild(item);
+      });
+    }
+
+    function createDeck(name){
+      const n = (name || "").trim();
+      if(!n){ toast("⚠️ Escribe un nombre"); return; }
+      const d = { id: uid(), name: n, cards: [] };
+      app.data.decks.unshift(d);
+      app.data.activeDeckId = d.id;
+      app.view.index = 0;
+      exitExam(true);
+      saveStore();
+      refreshDeckList();
+      render();
+      toast("➕ Mazo creado");
+    }
+
+    /**************************************************************
+     * CARDS
+     **************************************************************/
+    function openCardDialog(mode){
+      const deck = getDeck();
+      if(!deck){ toast("⚠️ No hay mazo"); return; }
+
+      app.view.editMode = mode;
+
+      if(mode === "new"){
+        ui.cardDialogTitle.textContent = "➕ Nueva tarjeta";
+        ui.cardQ.value = "";
+        ui.cardA.value = "";
+      }else{
+        if(deck.cards.length === 0){ toast("⚠️ No hay tarjetas"); return; }
+        const c = deck.cards[app.view.index];
+        ui.cardDialogTitle.textContent = "✏️ Editar tarjeta";
+        ui.cardQ.value = c.q || "";
+        ui.cardA.value = c.a || "";
+      }
+
+      ui.cardDialog.showModal();
+      setTimeout(() => ui.cardQ.focus(), 50);
+    }
+
+    function saveCardFromDialog(){
+      const deck = getDeck();
+      if(!deck) return;
+
+      const q = ui.cardQ.value.trim();
+      const a = ui.cardA.value.trim();
+      if(!q || !a){
+        toast("⚠️ Completa pregunta y respuesta");
+        return;
+      }
+
+      if(app.view.editMode === "new"){
+        deck.cards.push(normalizeCard({ id: uid(), q, a }));
+        app.view.index = deck.cards.length - 1;
+        toast("✅ Tarjeta creada");
+      }else{
+        const c = deck.cards[app.view.index];
+        c.q = q;
+        c.a = a;
+        normalizeCard(c);
+        toast("💾 Cambios guardados");
+      }
+
+      saveStore();
+      ui.cardDialog.close();
+      render();
+    }
+
+    function removeCurrentCard(){
+      const deck = getDeck();
+      if(!deck || deck.cards.length === 0) return;
+      if(!confirm("¿Borrar esta tarjeta?")) return;
+      deck.cards.splice(app.view.index, 1);
+      if(app.view.index >= deck.cards.length) app.view.index = 0;
+      exitExam(true);
+      saveStore();
+      render();
+      toast("🗑️ Tarjeta borrada");
+    }
+
+    function shuffleDeckStudy(){
+      const deck = getDeck();
+      if(!deck || deck.cards.length < 2) return;
+      deck.cards = deck.cards.map(normalizeCard);
+      const ids = makeShuffledIds(deck.cards);
+      const map = new Map(deck.cards.map(c => [c.id, c]));
+      deck.cards = ids.map(id => map.get(id)).filter(Boolean);
+      app.view.index = 0;
+      saveStore();
+      render();
+      toast("🔀 Mezclado");
+    }
+
+    /**************************************************************
+     * EXAM MODE
+     **************************************************************/
+    function enterExam(){
+      const deck = getDeck();
+      if(!deck){ toast("⚠️ No hay mazo"); return; }
+      if(deck.cards.length < MIN_EXAM_CARDS){
+        toast(`⚠️ Necesitas mínimo ${MIN_EXAM_CARDS} tarjetas para examen`);
+        return;
+      }
+      deck.cards = deck.cards.map(normalizeCard);
+
+      app.view.mode = "exam";
+      app.view.examQueue = makeShuffledIds(deck.cards);
+      app.view.examPos = 0;
+      app.view.examRevealed = false;
+      app.view.examLog = [];
+      app.view.examStartedAt = Date.now();
+      app.view.examEndedEarly = false;
+
+      ui.userAnswer.value = "";
+      ui.aArea.style.display = "none";
+      ui.knowBtn.style.display = "none";
+      ui.dontKnowBtn.style.display = "none";
+      ui.revealCompareBtn.disabled = false;
+
+      render();
+      toast("🧪 Examen iniciado");
+    }
+
+    function exitExam(forceNoSummary){
+      // si forceNoSummary true => salir sin resumen siempre (para cambios de mazo etc.)
+      if(app.view.mode !== "exam") return;
+      if(forceNoSummary){
+        hardExitToStudy();
+        return;
+      }
+
+      // si está saliendo “a voluntad”:
+      // si NO contestó ninguna -> sale sin resumen
+      if(app.view.examLog.length === 0){
+        hardExitToStudy();
+        toast("Examen cancelado (sin respuestas)");
+        return;
+      }
+
+      // si respondió al menos una -> resumen obligatorio
+      app.view.examEndedEarly = true;
+      showSummary();
+    }
+
+    function hardExitToStudy(){
+      app.view.mode = "study";
+      app.view.examQueue = [];
+      app.view.examPos = 0;
+      app.view.examRevealed = false;
+      app.view.examLog = [];
+      app.view.examStartedAt = null;
+      app.view.examEndedEarly = false;
+      ui.userAnswer.value = "";
+      render();
+    }
+
+    function examRevealCompare(){
+      if(app.view.mode !== "exam") return;
+      const deck = getDeck();
+      if(!deck || deck.cards.length === 0) return;
+
+      app.view.examRevealed = true;
+      ui.aArea.style.display = "block";
+      ui.knowBtn.style.display = "inline-flex";
+      ui.dontKnowBtn.style.display = "inline-flex";
+      ui.revealCompareBtn.disabled = true;
+
+      toast("Marca: ✅ La sé / ❌ No la sé");
+    }
+
+    function examMark(know){
+      if(app.view.mode !== "exam") return;
+      const deck = getDeck();
+      if(!deck || deck.cards.length === 0) return;
+
+      const cid = app.view.examQueue[app.view.examPos];
+      const card = deck.cards.find(c => c.id === cid) || deck.cards[0];
+      normalizeCard(card);
+
+      // guardar stats globales (historial invisible)
+      if(know) card.stats.know++;
+      else card.stats.dont++;
+
+      // guardar log de ESTE examen
+      app.view.examLog.push({
+        cardId: card.id,
+        verdict: know ? "know" : "dont",
+        userAnswer: (ui.userAnswer.value || "").trim(),
+        at: Date.now()
+      });
+
+      saveStore();
+
+      // avanzar en la cola
+      app.view.examPos++;
+
+      // fin de examen
+      if(app.view.examPos >= app.view.examQueue.length){
+        // si no contestó ninguna (no debería ocurrir aquí), sin resumen
+        if(app.view.examLog.length === 0){
+          hardExitToStudy();
+          return;
+        }
+        app.view.examEndedEarly = false;
+        showSummary();
+        return;
+      }
+
+      // preparar siguiente
+      app.view.examRevealed = false;
+      ui.userAnswer.value = "";
+      ui.aArea.style.display = "none";
+      ui.knowBtn.style.display = "none";
+      ui.dontKnowBtn.style.display = "none";
+      ui.revealCompareBtn.disabled = false;
+
+      render();
+    }
+
+    /**************************************************************
+     * SUMMARY (OBLIGATORIO)
+     **************************************************************/
+    function showSummary(){
+      const deck = getDeck();
+      if(!deck){ hardExitToStudy(); return; }
+      deck.cards = deck.cards.map(normalizeCard);
+
+      const total = app.view.examLog.length;
+      const good = app.view.examLog.filter(x => x.verdict === "know").length;
+      const bad  = app.view.examLog.filter(x => x.verdict === "dont").length;
+
+      const endedEarly = app.view.examEndedEarly;
+      ui.summarySubtitle.textContent =
+        endedEarly
+          ? `Saliste antes de tiempo. Respondidas: ${total}. (Resumen obligatorio)`
+          : `Examen completado. Respondidas: ${total}. (Resumen obligatorio)`;
+
+      // stats arriba
+      const startedAt = app.view.examStartedAt ? new Date(app.view.examStartedAt) : null;
+      ui.summaryStats.innerHTML = `
+        <span class="chip"><b>✅ Perfectas (La sé):</b> ${good}</span>
+        <span class="chip"><b>❌ Falladas (No la sé):</b> ${bad}</span>
+        <span class="chip"><b>📦 Mazo:</b> ${deck.name}</span>
+        <span class="chip"><b>🕒 Inicio:</b> ${startedAt ? startedAt.toLocaleString() : "—"}</span>
+      `;
+
+      // lista
+      ui.resultList.innerHTML = "";
+      for(const entry of app.view.examLog){
+        const card = deck.cards.find(c => c.id === entry.cardId);
+        if(!card) continue;
+
+        const item = document.createElement("div");
+        item.className = "resultItem";
+
+        const badge = entry.verdict === "know"
+          ? `<span class="badgeGood">✅ La sé</span>`
+          : `<span class="badgeBad">❌ No la sé</span>`;
+
+        const qPreview = (card.q || "").slice(0, 600);
+        const aPreview = (card.a || "").slice(0, 900);
+
+        const ua = entry.userAnswer ? entry.userAnswer.slice(0, 900) : "";
+
+        item.innerHTML = `
+          ${badge}
+          <div class="qTitle">${escapeHTML(qPreview)}${(card.q||"").length > 600 ? "…" : ""}</div>
+          <div class="smallMuted"><b>Tu respuesta:</b>\n${ua ? escapeHTML(ua) : "(vacía)"} </div>
+          <div class="smallMuted"><b>Respuesta correcta:</b>\n${escapeHTML(aPreview)}${(card.a||"").length > 900 ? "…" : ""}</div>
+          <div class="smallMuted"><b>Historial total:</b> ✅ ${card.stats.know}   ❌ ${card.stats.dont}</div>
+        `;
+
+        ui.resultList.appendChild(item);
+      }
+
+      // abrir resumen y obligar scroll arriba
+      ui.summaryDialog.showModal();
+      ui.summaryWrap.scrollTop = 0;
+
+      // Salir del modo examen internamente, pero NO vuelvas a la UI hasta que el resumen lo decida
+      // (así el resumen queda como “puerta obligatoria”).
+      app.view.mode = "study";
+      app.view.examQueue = [];
+      app.view.examPos = 0;
+      app.view.examRevealed = false;
+      // mantenemos examLog para el resumen hasta que el usuario elija
+      render();
+    }
+
+    // Evitar cierre del resumen con ESC (obligatorio)
+    ui.summaryDialog.addEventListener("cancel", (e) => e.preventDefault());
+
+    function closeSummaryAndGoStudy(){
+      // limpiar log cuando ya “cumplió” el resumen
+      app.view.examLog = [];
+      app.view.examStartedAt = null;
+      app.view.examEndedEarly = false;
+      ui.summaryDialog.close();
+      toast("📚 Repaso");
+      render();
+    }
+
+    function closeSummaryAndStartNewExam(){
+      ui.summaryDialog.close();
+      // limpiar log y arrancar nuevo examen
+      app.view.examLog = [];
+      app.view.examStartedAt = null;
+      app.view.examEndedEarly = false;
+      enterExam();
+    }
+
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    /**************************************************************
+     * EXPORT / IMPORT
+     **************************************************************/
+    function downloadJSON(obj, filename){
+      const blob = new Blob([JSON.stringify(obj, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportCurrentDeck(){
+      const d = getDeck();
+      if(!d){ toast("⚠️ No hay mazo"); return; }
+      const safeName = d.name.replace(/[^\w\-]+/g, "_").slice(0,40) || "mazo";
+      downloadJSON({ deck: d }, `mazo_${safeName}.json`);
+      toast("⬇️ Exportado mazo");
+    }
+
+    function importIntoCurrentDeck(file){
+      const d = getDeck();
+      if(!d){ toast("⚠️ No hay mazo"); return; }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const parsed = JSON.parse(reader.result);
+          const incoming = parsed.deck?.cards;
+          if(!Array.isArray(incoming)) throw new Error("Formato inválido");
+
+          const cleaned = incoming
+            .filter(x => x && typeof x === "object")
+            .map(x => normalizeCard({
+              id: uid(),
+              q: String(x.q ?? x.question ?? ""),
+              a: String(x.a ?? x.answer ?? ""),
+              stats: x.stats ? { know: Number(x.stats.know||0), dont: Number(x.stats.dont||0) } : { know:0, dont:0 }
+            }))
+            .filter(x => x.q.trim() && x.a.trim());
+
+          if(!cleaned.length){ alert("No hay tarjetas válidas en ese JSON."); return; }
+
+          const replace = confirm("¿Reemplazar este mazo?\nAceptar = reemplazar • Cancelar = combinar");
+          d.cards = replace ? cleaned : d.cards.concat(cleaned);
+
+          app.view.index = 0;
+          exitExam(true);
+          saveStore();
+          render();
+          toast("⬆️ Importado en mazo");
+        }catch(e){
+          alert("No se pudo importar.\nAsegúrate de que sea un JSON de mazo válido.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function exportAll(){
+      downloadJSON(app.data, `flashcards_todos_los_mazos.json`);
+      toast("⬇️ Exportado todo");
+    }
+
+    function importAll(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const parsed = JSON.parse(reader.result);
+          if(!parsed || typeof parsed !== "object" || !Array.isArray(parsed.decks)) throw new Error("Formato inválido");
+
+          const decks = parsed.decks
+            .filter(d => d && typeof d === "object")
+            .map(d => ({
+              id: uid(),
+              name: String(d.name ?? "Mazo"),
+              cards: Array.isArray(d.cards) ? d.cards.map(c => normalizeCard({
+                id: uid(),
+                q: String(c.q ?? c.question ?? ""),
+                a: String(c.a ?? c.answer ?? ""),
+                stats: c.stats ? { know: Number(c.stats.know||0), dont: Number(c.stats.dont||0) } : { know:0, dont:0 }
+              })).filter(c => c.q.trim() && c.a.trim()) : []
+            }));
+
+          if(!decks.length){ alert("No hay mazos válidos en ese archivo."); return; }
+
+          const replace = confirm("¿Reemplazar TODO lo actual?\nAceptar = reemplazar • Cancelar = combinar");
+          app.data.decks = replace ? decks : app.data.decks.concat(decks);
+          app.data.activeDeckId = app.data.decks[0].id;
+          app.view.index = 0;
+          exitExam(true);
+
+          saveStore();
+          render();
+          toast("⬆️ Importado todo");
+        }catch(e){
+          alert("No se pudo importar.\nEl archivo debe ser un JSON válido exportado por esta app.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function wipeEverything(){
+      if(!confirm("Esto borra TODOS los mazos y tarjetas de ESTE navegador.\n¿Seguro?")) return;
+      localStorage.removeItem(STORE_KEY);
+      app.data = { activeDeckId: null, decks: [] };
+      app.view.index = 0;
+      exitExam(true);
+      ui.studyView.style.display = "none";
+      ui.topBar.style.display = "none";
+      ui.welcomeView.style.display = "block";
+      toast("🧨 Todo borrado");
+    }
+
+    /**************************************************************
+     * EVENTS
+     **************************************************************/
+    ui.enterBtn.addEventListener("click", () => { ensureDeck(); showApp(); });
+    ui.quickDeckBtn.addEventListener("click", () => { ensureDeck(); showApp(); openDecks(); });
+
+    ui.decksBtn.addEventListener("click", openDecks);
+    ui.createDeckBtn.addEventListener("click", () => { createDeck(ui.newDeckName.value); ui.newDeckName.value = ""; });
+    ui.closeDeckDlg.addEventListener("click", () => ui.deckDialog.close());
+
+    ui.prevBtn.addEventListener("click", () => {
+      if(app.view.mode !== "study") return;
+      const d = getDeck(); if(!d || d.cards.length === 0) return;
+      app.view.index--; render();
+    });
+
+    ui.nextBtn.addEventListener("click", () => {
+      const d = getDeck(); if(!d || d.cards.length === 0) return;
+      if(app.view.mode === "exam"){
+        toast("En examen debes marcar ✅/❌ para continuar");
+        return;
+      }
+      app.view.index++; render();
+    });
+
+    ui.mixBtn.addEventListener("click", () => {
+      if(app.view.mode !== "study") return;
+      shuffleDeckStudy();
+    });
+
+    ui.revealBtn.addEventListener("click", () => {
+      if(app.view.mode !== "study") return;
+      const d = getDeck();
+      if(!d || d.cards.length === 0) return;
+      setAnswerVisible(!app.view.answerVisible);
+    });
+
+    ui.newCardBtn.addEventListener("click", () => openCardDialog("new"));
+    ui.editCardBtn.addEventListener("click", () => {
+      if(app.view.mode !== "study") { toast("Sal del examen para editar"); return; }
+      openCardDialog("edit");
+    });
+
+    ui.removeCardBtn.addEventListener("click", () => {
+      if(app.view.mode !== "study") { toast("Sal del examen para borrar"); return; }
+      removeCurrentCard();
+    });
+
+    ui.closeCardDlg.addEventListener("click", () => ui.cardDialog.close());
+    ui.cancelCardDlg.addEventListener("click", () => ui.cardDialog.close());
+    ui.saveCardDlg.addEventListener("click", saveCardFromDialog);
+
+    ui.exportDeckBtn.addEventListener("click", exportCurrentDeck);
+    ui.importDeckInput.addEventListener("change", (e) => {
+      const f = e.target.files?.[0];
+      if(f) importIntoCurrentDeck(f);
+      e.target.value = "";
+    });
+
+    ui.exportAllBtn.addEventListener("click", exportAll);
+    ui.importAllInput.addEventListener("change", (e) => {
+      const f = e.target.files?.[0];
+      if(f) importAll(f);
+      e.target.value = "";
+    });
+
+    ui.wipeBtn.addEventListener("click", wipeEverything);
+
+    // Exam toggle (entra o sale)
+    ui.examToggleBtn.addEventListener("click", () => {
+      if(app.view.mode === "exam") exitExam(false);
+      else enterExam();
+    });
+
+    ui.exitExamBtn.addEventListener("click", () => exitExam(false));
+
+    ui.revealCompareBtn.addEventListener("click", examRevealCompare);
+    ui.knowBtn.addEventListener("click", () => examMark(true));
+    ui.dontKnowBtn.addEventListener("click", () => examMark(false));
+
+    // Summary buttons (al final del scroll)
+    ui.resumeStudyBtn.addEventListener("click", closeSummaryAndGoStudy);
+    ui.anotherExamBtn.addEventListener("click", closeSummaryAndStartNewExam);
+
+    // INIT
+    loadStore();
+
+    /**************************************************************
+     * PWA: service worker register
+     **************************************************************/
+    if("serviceWorker" in navigator){
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(()=>{});
+      });
+    }
+  </script>
+</body>
+</html>

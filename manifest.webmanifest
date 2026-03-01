@@ -1,0 +1,15 @@
+{
+  "name": "Espacio de Estudio",
+  "short_name": "Flashcards",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20512%20512%27%3E%3Crect%20width%3D%27512%27%20height%3D%27512%27%20rx%3D%2796%27%20fill%3D%27%230b1020%27/%3E%3Cpath%20d%3D%27M136%20164h240v40H136zm0%2080h240v40H136zm0%2080h160v40H136z%27%20fill%3D%27%237c3aed%27/%3E%3Ccircle%20cx%3D%27396%27%20cy%3D%27344%27%20r%3D%2740%27%20fill%3D%27%2322c55e%27/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
