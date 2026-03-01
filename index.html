@@ -343,10 +343,11 @@
         <button class="btn flat" id="decksBtn" title="Paquetes / Mazos">📦 Mazos</button>
         <button class="btn primary" id="examToggleBtn" title="Modo examen">🧪 Examen</button>
         <button class="btn" id="exportAllBtn" title="Exportar todo">⬇️ Exportar todo</button>
-        <label class="btn" title="Importar todo">
-          ⬆️ Importar todo
-          <input type="file" id="importAllInput" hidden>
-        </label>
+        <span class="btn" title="Importar todo" style="position:relative; overflow:hidden;">
+  ⬆️ Importar todo
+  <input type="file" id="importAllInput"
+         style="position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;">
+</span>
         <button class="btn danger flat" id="wipeBtn" title="Borrar TODO del navegador">🧨 Borrar todo</button>
       </div>
     </div>
@@ -412,10 +413,11 @@
             <button class="btn" id="editCardBtn">✏️ Editar</button>
             <button class="btn danger" id="removeCardBtn">🗑️ Borrar</button>
             <button class="btn" id="exportDeckBtn">⬇️ Exportar mazo</button>
-            <label class="btn" title="Importar en este mazo">
-              ⬆️ Importar mazo
-              <input type="file" id="importDeckInput" hidden>
-            </label>
+            <span class="btn" title="Importar en este mazo" style="position:relative; overflow:hidden;">
+  ⬆️ Importar mazo
+  <input type="file" id="importDeckInput"
+         style="position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;">
+</span>
           </div>
         </div>
 
@@ -1412,4 +1414,3 @@
   </script>
 </body>
 </html>
-
