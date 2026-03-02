@@ -1343,6 +1343,19 @@
 
     ui.mixBtn.addEventListener("click", () => {
       if(app.view.mode !== "study") return;
+      
+const d = getDeck();
+  if(!d || d.cards.length < 2){
+    toast("⚠️ Necesitas al menos 2 tarjetas para mezclar");
+    return;
+  }
+
+  const ok = confirm("¿Estás seguro/a de que quieres mezclar el mazo?");
+  if(!ok){
+    toast("↩️ Mezcla cancelada");
+    return;
+  }
+
       shuffleDeckStudy();
     });
 
@@ -1414,5 +1427,3 @@
   </script>
 </body>
 </html>
-
-
