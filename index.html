@@ -1419,11 +1419,60 @@ const d = getDeck();
     /**************************************************************
      * PWA: service worker register
      **************************************************************/
-    if("serviceWorker" in navigator){
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      const reg = await navigator.serviceWorker.register("./sw.js");
+
+      // Chequea actualizaciones al abrir (útil en GH Pages)
+      // registration.update() intenta bajar SW nuevo. [7](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/update)
+      reg.update().catch(() => {});
+
+      // Si ya había una actualización esperando
+      if (reg.waiting) showUpdatePrompt(reg);
+
+      // Cuando se detecta un SW nuevo instalándose
+      reg.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+
+        newWorker.addEventListener("statechange", () => {
+          // installed + ya existe controller => update listo
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            showUpdatePrompt(reg);
+          }
+        });
       });
+
+      // Cuando el SW nuevo toma control -> recarga para usar la nueva versión
+      let reloading = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (reloading) return;
+        reloading = true;
+        window.location.reload();
+      });
+
+    } catch {
+      // Si falla, la app sigue funcionando sin SW
     }
+  });
+}
+
+function showUpdatePrompt(reg) {
+  toast("✨ Nueva versión disponible");
+
+  // Si quieres algo más bonito, luego lo cambiamos por un modal propio.
+  setTimeout(() => {
+    const ok = confirm("Hay una actualización disponible.\nTus mazos NO se borran.\n¿Actualizar ahora?");
+    if (!ok) return;
+
+    // Dile al SW waiting que se active ya. [4](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting)[1](https://web.dev/articles/service-worker-lifecycle)
+    if (reg.waiting) {
+      reg.waiting.postMessage({ type: "SKIP_WAITING" });
+    }
+  }, 200);
+}
   </script>
 </body>
 </html>
+
