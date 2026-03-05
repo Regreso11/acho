@@ -7,7 +7,7 @@
       "createdAt": "2026-03-06"
     },
     {
-      "id": "002",
+      "id": "102",
       "title": "Actualizaciones:",
       "body": "Si hay una versión nueva, futuramente tu elegiras si actualizas y te daras cuenta mucho mejor",
       "createdAt": "2026-03-06"
@@ -15,4 +15,5 @@
   ]
 
 }
+
 
