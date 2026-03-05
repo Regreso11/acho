@@ -1,29 +1,86 @@
-const CACHE_NAME = "flashcards-pwa-v1";
-const ASSETS = [
+// sw.js
+const CACHE_VERSION = "v2"; // <-- cambia a v3, v4, etc. por release
+const CACHE_NAME = `flashcards-${CACHE_VERSION}`;
+
+const CORE_ASSETS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./sw.js"
 ];
 
+// Install: precache básico + activar rápido
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
-  self.skipWaiting();
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+
+    // Pedir "reload" para evitar copias viejas del navegador
+    await Promise.all(
+      CORE_ASSETS.map(async (url) => {
+        const req = new Request(url, { cache: "reload" });
+        const res = await fetch(req);
+        await cache.put(url, res);
+      })
+    );
+
+    // Pasa de waiting a active lo antes posible (cuando toque)
+    await self.skipWaiting();
+  })());
 });
 
+// Activate: limpia caches viejos + toma control de clientes
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.map(k => (k !== CACHE_NAME ? caches.delete(k) : null)))
-    )
-  );
-  self.clients.claim();
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)));
+    await self.clients.claim();
+  })());
 });
 
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
-  );
+// Permite que la página diga: "actívate ya"
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
+
+// Fetch: HTML (navegación) => Network First
+//        resto => Cache First
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  if (req.method !== "GET") return;
+
+  const isNavigation =
+    req.mode === "navigate" ||
+    (req.headers.get("accept") || "").includes("text/html");
+
+  if (isNavigation) {
+    event.respondWith(networkFirstHTML(req));
+    return;
+  }
+
+  event.respondWith(cacheFirst(req));
+});
+
+async function networkFirstHTML(req) {
+  const cache = await caches.open(CACHE_NAME);
+  try {
+    const fresh = await fetch(req);
+    // Guardar el HTML actualizado para offline
+    cache.put("./index.html", fresh.clone());
+    return fresh;
+  } catch {
+    const cached = await cache.match("./index.html");
+    return cached || new Response("Offline", { status: 503 });
+  }
+}
+
+async function cacheFirst(req) {
+  const cached = await caches.match(req);
+  if (cached) return cached;
+
+  const fresh = await fetch(req);
+  const cache = await caches.open(CACHE_NAME);
+  cache.put(req, fresh.clone());
+  return fresh;
+}
