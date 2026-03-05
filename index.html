@@ -329,6 +329,9 @@
       .brand{min-width: unset;}
       .paper{ max-height: 38vh; }
     }
+    /* Permitir clicks en el pop-up de novedades (porque .toast tiene pointer-events:none) */
+#newsPopup { pointer-events: auto; }
+#newsPopup .btn { pointer-events: auto; }
   </style>
 </head>
 
@@ -342,6 +345,7 @@
       <div class="actions">
         <button class="btn flat" id="decksBtn" title="Paquetes / Mazos">📦 Mazos</button>
         <button class="btn primary" id="examToggleBtn" title="Modo examen">🧪 Examen</button>
+        <button class="btn" id="newsBtn" title="Novedades">📰 Novedades</button>
         <button class="btn" id="exportAllBtn" title="Exportar todo">⬇️ Exportar todo</button>
         <span class="btn" title="Importar todo" style="position:relative; overflow:hidden;">
   ⬆️ Importar todo
@@ -489,6 +493,7 @@
       <div class="dlg head" style="padding:0;">
         <div>
           <h3 style="margin:0;">📜 Resumen del Examen</h3>
+          
           <div class="hint" id="summarySubtitle">—</div>
         </div>
       </div>
@@ -511,7 +516,50 @@
       <div class="hint">Fin del resumen. (Sí: esto es intencionalmente estricto).</div>
     </div>
   </dialog>
+<!-- Dialog: Novedades -->
+<dialog id="newsDialog">
+  <div class="summaryWrap" id="newsWrap">
+    <div class="dlg head" style="padding:0;">
+      <div>
+        <h3 style="margin:0;">📰 Novedades</h3>
+        <div class="hint" id="newsSubtitle">Cambios y avisos dentro de la app.</div>
+      </div>
+      <button class="btn flat" id="closeNewsDlg">✖</button>
+    </div>
 
+    <!-- Banner de actualización pendiente (si hay SW waiting) -->
+    <div class="summaryStats" id="updateBanner" style="display:none;">
+      <span class="chip"><b>✨ Hay una actualización lista</b></span>
+      <button class="btn primary" id="applyUpdateBtn">Actualizar ahora</button>
+      <span class="chip"><b>Nota:</b> tus mazos no se borran</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="resultList" id="newsList"></div>
+
+    <div class="divider"></div>
+
+    <div class="row" style="justify-content:flex-end;">
+      <button class="btn" id="markAllSeenBtn">✅ Marcar todo como visto</button>
+    </div>
+
+    <div class="hint">Este panel funciona sin notificaciones push.</div>
+  </div>
+</dialog>
+  <!-- Pop-up: Novedades (solo 1 vez por novedad nueva) -->
+<div class="toast" id="newsPopup" style="display:none; bottom:70px; max-width:min(620px, 92vw); border-radius:18px;">
+  <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
+    <div style="display:grid; gap:3px;">
+      <div style="font-weight:900;">📰 Hay novedades nuevas</div>
+      <div style="font-size:12px; color:rgba(255,255,255,.75);" id="newsPopupText">—</div>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+      <button class="btn primary" id="newsPopupViewBtn">Ver</button>
+      <button class="btn flat" id="newsPopupCloseBtn">Cerrar</button>
+    </div>
+  </div>
+</div>
   <div class="toast" id="toast"></div>
 
   <script>
@@ -589,6 +637,21 @@
       newDeckName: document.getElementById("newDeckName"),
       createDeckBtn: document.getElementById("createDeckBtn"),
       deckList: document.getElementById("deckList"),
+      // Novedades
+newsBtn: document.getElementById("newsBtn"),
+newsDialog: document.getElementById("newsDialog"),
+newsWrap: document.getElementById("newsWrap"),
+closeNewsDlg: document.getElementById("closeNewsDlg"),
+newsList: document.getElementById("newsList"),
+markAllSeenBtn: document.getElementById("markAllSeenBtn"),
+updateBanner: document.getElementById("updateBanner"),
+applyUpdateBtn: document.getElementById("applyUpdateBtn"),
+
+// Pop-up Novedades
+newsPopup: document.getElementById("newsPopup"),
+newsPopupText: document.getElementById("newsPopupText"),
+newsPopupViewBtn: document.getElementById("newsPopupViewBtn"),
+newsPopupCloseBtn: document.getElementById("newsPopupCloseBtn"),
     };
 
     const app = {
@@ -789,6 +852,7 @@
       ui.topBar.style.display = "flex";
       render();
       toast("📚 Listo");
+      maybeShowNewsPopupOnce();
     }
 
     /**************************************************************
@@ -1199,7 +1263,105 @@
         .replaceAll('"',"&quot;")
         .replaceAll("'","&#039;");
     }
+  /**************************************************************
+ * NOVEDADES (Changelog / News)
+ **************************************************************/
+const NEWS_STATE_KEY = "es_estudio_news_state_v1";
 
+function loadNewsState(){
+  try{
+    return JSON.parse(localStorage.getItem(NEWS_STATE_KEY)) || { popupShownForId: null, seenIds: {} };
+  }catch{
+    return { popupShownForId: null, seenIds: {} };
+  }
+}
+function saveNewsState(state){
+  localStorage.setItem(NEWS_STATE_KEY, JSON.stringify(state));
+}
+
+async function getNewsItems(){
+  try{
+    const res = await fetch("./novedades.json", { cache: "no-store" });
+    if(!res.ok) throw new Error("No OK");
+    const data = await res.json();
+    return Array.isArray(data.items) ? data.items : [];
+  }catch{
+    return [];
+  }
+}
+
+function hideNewsPopup(){
+  ui.newsPopup.classList.remove("on");
+  ui.newsPopup.style.display = "none";
+}
+
+async function maybeShowNewsPopupOnce(){
+  const items = await getNewsItems();
+  if(!items.length) return;
+
+  items.sort((a,b) => String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+  const newest = items[0];
+
+  const state = loadNewsState();
+
+  // ✅ Solo una vez por novedad nueva
+  if(state.popupShownForId === newest.id) return;
+
+  // ✅ marca como mostrado INMEDIATAMENTE (así no se repite al reabrir)
+  state.popupShownForId = newest.id;
+  saveNewsState(state);
+
+  ui.newsPopupText.textContent = newest.title || "Novedad nueva";
+  ui.newsPopup.style.display = "block";
+  ui.newsPopup.classList.add("on");
+}
+
+function setUpdateBanner(){
+  const reg = window._swReg;
+  ui.updateBanner.style.display = (reg && reg.waiting) ? "flex" : "none";
+}
+
+function applyPendingUpdate(){
+  const reg = window._swReg;
+  if(reg && reg.waiting){
+    reg.waiting.postMessage({ type: "SKIP_WAITING" });
+    toast("Actualizando...");
+  }else{
+    toast("No hay actualización pendiente");
+  }
+}
+
+async function renderNewsPanel(){
+  const items = await getNewsItems();
+  const state = loadNewsState();
+
+  items.sort((a,b) => String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+
+  ui.newsList.innerHTML = "";
+  if(!items.length){
+    const empty = document.createElement("div");
+    empty.className = "hint";
+    empty.textContent = "No hay novedades todavía.";
+    ui.newsList.appendChild(empty);
+    return;
+  }
+
+  for(const it of items){
+    const seen = !!state.seenIds[it.id];
+
+    const box = document.createElement("div");
+    box.className = "resultItem";
+    box.innerHTML = `
+      <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
+        <div class="qTitle">${escapeHTML(it.title || "Sin título")}</div>
+        <span class="${seen ? "chip" : "badgeGood"}">${seen ? "Visto" : "Nuevo"}</span>
+      </div>
+      <div class="smallMuted"><b>Fecha:</b> ${escapeHTML(it.createdAt || "—")}</div>
+      <div class="smallMuted">${escapeHTML(it.body || "")}</div>
+    `;
+    ui.newsList.appendChild(box);
+  }
+}
     /**************************************************************
      * EXPORT / IMPORT
      **************************************************************/
@@ -1412,7 +1574,38 @@ const d = getDeck();
     // Summary buttons (al final del scroll)
     ui.resumeStudyBtn.addEventListener("click", closeSummaryAndGoStudy);
     ui.anotherExamBtn.addEventListener("click", closeSummaryAndStartNewExam);
+/**************************************************************
+ * NOVEDADES: EVENTS
+ **************************************************************/
+ui.newsBtn?.addEventListener("click", async () => {
+  await renderNewsPanel();
+  setUpdateBanner();
+  ui.newsDialog.showModal();
+  ui.newsWrap.scrollTop = 0;
+});
 
+ui.closeNewsDlg?.addEventListener("click", () => ui.newsDialog.close());
+
+ui.newsPopupViewBtn?.addEventListener("click", async () => {
+  hideNewsPopup();
+  await renderNewsPanel();
+  setUpdateBanner();
+  ui.newsDialog.showModal();
+  ui.newsWrap.scrollTop = 0;
+});
+
+ui.newsPopupCloseBtn?.addEventListener("click", hideNewsPopup);
+
+ui.markAllSeenBtn?.addEventListener("click", async () => {
+  const items = await getNewsItems();
+  const state = loadNewsState();
+  for(const it of items) state.seenIds[it.id] = true;
+  saveNewsState(state);
+  toast("✅ Marcadas como visto");
+  renderNewsPanel();
+});
+
+ui.applyUpdateBtn?.addEventListener("click", applyPendingUpdate);
     // INIT
     loadStore();
 
@@ -1423,7 +1616,7 @@ const d = getDeck();
   window.addEventListener("load", async () => {
     try {
       const reg = await navigator.serviceWorker.register("./sw.js");
-
+window._swReg = reg;
       // Chequea actualizaciones al abrir (útil en GH Pages)
       // registration.update() intenta bajar SW nuevo. [7](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/update)
       reg.update().catch(() => {});
@@ -1475,4 +1668,5 @@ function showUpdatePrompt(reg) {
   </script>
 </body>
 </html>
+
 
