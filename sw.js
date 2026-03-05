@@ -47,9 +47,17 @@ self.addEventListener("message", (event) => {
 // Fetch: HTML (navegación) => Network First
 //        resto => Cache First
 self.addEventListener("fetch", (event) => {
+  
   const req = event.request;
   if (req.method !== "GET") return;
 
+const url = new URL(req.url);
+
+  // ✅ Novedades: siempre traer de red (no cachear)
+  if (url.pathname.endsWith("/novedades.json")) {
+    event.respondWith(fetch(req));
+    return;
+  }
   const isNavigation =
     req.mode === "navigate" ||
     (req.headers.get("accept") || "").includes("text/html");
@@ -84,3 +92,4 @@ async function cacheFirst(req) {
   cache.put(req, fresh.clone());
   return fresh;
 }
+
