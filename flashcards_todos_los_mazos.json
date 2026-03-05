@@ -1,0 +1,542 @@
+{
+  "activeDeckId": "614e51cb9d6cf819caab31c7c",
+  "decks": [
+    {
+      "id": "614e51cb9d6cf819caab31c7c",
+      "name": "Mi primer mazo",
+      "cards": [
+        {
+          "id": "fc608645a24e419cab10f939",
+          "q": "Funciones que hace la sangre son 3 simples funciones",
+          "a": "Distribuye\nRegula\nProtege",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "e8bb6153aa0c0819cab14ac1c",
+          "q": "Mas informacion de cada funcion de la sangre de las 3 pasos, enumera",
+          "a": "Distribucion:\n1. Oxigeno que transporta nutrientes a todo el cuerpo\n2. Transporta desechos metabolicos a pulmones y riñones para eliminar\n3. Hormonas desde organos endocrinos hacia organos diana\nRegulacion:\n1. La temperatura del cuerpo, absorviendo y distribuyendo calor\n2. Adecua fluidos en el volumen del sistema circulatorio\n3. Mantiene el ph estable mediante buffers\nProtege:\n1. Perdida de sangre\n2. Proteinas de plasma y plaquetas\n3. Clot formation",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "9c14375f9178f819cab175d78",
+          "q": "De que esta echo el plasma, que es lo que tiene?",
+          "a": "1. Es 90% agua\n2. Tiene proteinas (mayormente del higado), albumina (60%), globulinas(36%), fibrinogeno(4%)",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "067f3bca4485f819cab1963de",
+          "q": "Que transporta el plasma?",
+          "a": "Desechos nitrogenados (ejemplo, cretina)\nNutrientes (glucosa, aminoacidos)\nElectrolitos\nGases",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "78c8e8213d41e19cab1a9acb",
+          "q": "De que se compone la sangre?",
+          "a": "Plasma\nPlaquetas\nCelulas blancas (Erythrocytes)\nCelulas rojas (Leukocytes)",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "d28c6f407d24819cab2d47ed",
+          "q": "¿Qué diferencias clave existen entre los elementos formes?",
+          "a": "Solo WBC son células completas; RBC sin núcleo/organelos; plaquetas son fragmentos; muchas células duran pocos días; se originan en médula ósea",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "849c5c566f2c19cab2dcef6",
+          "q": "¿Qué “elementos formes” aparecen en el esquema?",
+          "a": "Eritrocitos, plaquetas y varios leucocitos (neutrófilo, linfocito, monocito).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "e67de198e51b19cab2e3b26",
+          "q": "Describe la estructura y rasgos del eritrocito (RBC)",
+          "a": "Disco bicóncavo, anucleado y sin organelos; lleno de Hb; espectrina le da flexibilidad; contribuye a la viscosidad sanguínea.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "64e04df60ce3b19cab2ec950",
+          "q": "Qué idea transmite la figura del eritrocito (tamaño/forma)?",
+          "a": "Forma bicóncava; aprox. ~7.5 μm de diámetro y ~2.5 μm de grosor en el borde (más delgado al centro).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "3d0b747f2d863819cab2f9534",
+          "q": "¿Cuál es la función del RBC y cómo es la Hb?",
+          "a": "RBC transporta gases; Hb tiene globina (2α + 2β) y 4 hemes con Fe; cada Fe une 1 O₂ → Hb carga 4 O₂. [Blood I | PDF]\n\nFE=HIERRO",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "29ce3e6495a8219cab2ffffb",
+          "q": "¿Qué muestra el diagrama de la hemoglobina?",
+          "a": "Hb = 4 cadenas de globina (2α, 2β) + 4 grupos hemo; el hierro del hemo es el sitio de unión de O₂.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "a22f825f38d5a19cab305bd7",
+          "q": "¿Qué formas de Hb se mencionan y cuándo ocurren?",
+          "a": "Oxihemoglobina (carga O₂ en pulmones, rojo rubí); desoxi/reducida (libera O₂ en tejidos, rojo oscuro); carbaminohemoglobina (carga CO₂ en tejidos, ~20% CO₂).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "8c590dd9d06bc19cab30c1a1",
+          "q": "¿Qué es hematopoyesis y dónde ocurre en adultos?",
+          "a": "Formación de células sanguíneas en médula ósea roja; especialmente pelvis, vértebras, esternón, costillas y cráneo",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "afd8a645de0c219cab31525e",
+          "q": "¿Qué es eritropoyesis y qué pasa si hay pocos/muchos RBC?",
+          "a": "Producción de RBC; pocos → hipoxia tisular; muchos → ↑viscosidad; depende de control hormonal y recursos (Fe, AA, vitaminas B)",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "320819e51031b19cab31b55a",
+          "q": "¿Qué es la EPO y qué la estimula?",
+          "a": "Eritropoyetina: estímulo directo de eritropoyesis; la liberan riñones en respuesta a hipoxia.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "247df13362860819cab3273f4",
+          "q": "Menciona causas de hipoxia que elevan EPO.",
+          "a": "Hemorragia/↑destrucción de RBC, Hb insuficiente (deficiencia de hierro), y menor disponibilidad de O₂ (altitudes)",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "b6ab65678d11d19cab366642",
+          "q": "¿Qué efectos produce la EPO y qué rol juega la testosterona?",
+          "a": "Acelera maduración de células en médula ósea; testosterona aumenta producción de EPO → mayor recuento de RBC en varones.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "94cbf20535aa3819cab36edbc",
+          "q": "Resume el feedback de homeostasis de O₂ con EPO.",
+          "a": "Hipoxia → riñón (y algo hígado) libera EPO → EPO estimula médula ósea → ↑RBC → ↑capacidad de cargar O₂ → retorno a niveles normales.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "a60b9bd05ac5719cab37e265",
+          "q": "¿Qué requiere la eritropoyesis en la dieta?",
+          "a": "Nutrientes generales; hierro (65% en Hb; almacenado como ferritina/hemosiderina; transportado por transferrina) y B₁₂ + folato para síntesis de ADN/división",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "265c0da5b8fa8819cab3857e2",
+          "q": "¿Cuál es la vida del eritrocito y cómo se destruye?",
+          "a": "100–120 días; se vuelve frágil y Hb se degrada; macrófagos lo fagocitan (ej. bazo).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "7ea2dffb5a9d6819cab3921d4",
+          "q": "¿Qué es anemia y cuáles síntomas menciona?",
+          "a": "Baja capacidad de transportar O₂; causa fatiga, palidez, falta de aire y escalofríos.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "d4e04ef940aeb819cab39834c",
+          "q": "¿Cómo difieren los leucocitos de los eritrocitos?",
+          "a": "Son más grandes, nucleados, sin Hb; <1% del volumen; combaten infecciones/inmunidad; se dividen en granulocitos y agranulocitos.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "6da23fb1350c219cab39d7fd",
+          "q": "Cuál es el diferencial de WBC (rangos y porcentajes)?",
+          "a": "Total 4800–10800/µL; neutrófilos 50–70%, linfocitos 25–45%, eosinófilos 2–4%, basófilos 0.5–1%, monocitos 3–8%",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "882d41e151bcf19cab3a759a",
+          "q": "¿Qué son granulocitos y qué hace cada tipo?",
+          "a": "Tienen gránulos visibles: neutrófilos fagocitan bacterias; basófilos liberan histamina; eosinófilos combaten parásitos (gusanos).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "b964c6be3c132819cab3ac77b",
+          "q": "¿Cómo reconocer neutrófilo/eosinófilo/basófilo por morfología?",
+          "a": "Neutrófilo: núcleo multilobulado; eosinófilo: núcleo bilobulado + gránulos rojos; basófilo: núcleo bilobulado + gránulos oscuros/púrpura",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "f3810989dcda119cab3b1896",
+          "q": "¿Qué son agranulocitos y qué rasgos tienen?",
+          "a": "Linfocitos y monocitos; sin gránulos visibles; núcleo esférico o en forma de riñón.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "8cd519aaae847819cab3b9ca8",
+          "q": "¿Cómo distinguir linfocito pequeño vs monocito en la figura?",
+          "a": "Linfocito: núcleo grande redondo con poco citoplasma; monocito: núcleo con forma de riñón.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "9090c3ee86035819cab3bf0cb",
+          "q": "¿Qué hacen los linfocitos B y T?",
+          "a": "B producen anticuerpos; T matan células (citotóxicos) o regulan respuestas (helper) y atacan virus/tumores; esenciales para inmunidad.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "2b993fb0c370e19cab3c48ef",
+          "q": "¿Qué hacen los monocitos y qué son los macrófagos?",
+          "a": "Monocitos fagocitan microbios y activan defensas; salen a tejidos y se convierten en macrófagos (fagocitos en hígado/riñón/bazo).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "31fc9b0e18a1919cab3cb4d3",
+          "q": "¿Qué representa la micrografía “Macrophage engulfing bacteria”?",
+          "a": "Un macrófago engullendo bacterias (fagocitosis).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "e1158fb29a6f819cab3d410b",
+          "q": "¿Qué cambios en WBC sugieren enfermedades específicas?",
+          "a": "Bacteriana → neutrófilos ↑; mononucleosis → B ↑; AIDS → T ↓; leucemia → WBC anormales.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "22bab4a543b0e819cab3d97e9",
+          "q": "¿Qué es leucopoyesis y qué la estimula?",
+          "a": "Producción de WBC; estimulada por interleucinas (ej. IL‑1, IL‑2) y CSFs (factores estimulantes de colonias) según el tipo de WBC.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "28225bd0f54f1819cab456773",
+          "q": "Trastornos de leucocitos: ¿qué incluye la diapositiva?",
+          "a": "Leucopenia (WBC bajos, puede ser por fármacos) y leucemias (aguda con blastos, más en niños; crónica, más en adultos mayores).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "48403a99ca60c19cab45e402",
+          "q": "¿Qué ocurre en leucemia y por qué puede causar muerte?",
+          "a": "Médula ósea ocupada por leucocitos cancerosos; WBC inmaduros no funcionales en sangre; muerte por hemorragias internas e infecciones; tratamientos: irradiación, fármacos, trasplante de células madre.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "4fae389ed16e9819cab466146",
+          "q": "¿Qué son plaquetas y quién regula su formación?",
+          "a": "Fragmentos de megacariocitos; reguladas por trombopoyetina (riñón e hígado); esenciales en coagulación.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "d6c4ec204e169819cab47c16e",
+          "q": "¿Qué sucede al comenzar la coagulación tras dañar un vaso?",
+          "a": "Plaquetas forman un tapón; plaquetas y tejidos dañados liberan activador de protrombina; convierte protrombina → trombina y requiere calcio.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "8c2a0e1c38fe119cab49b7e2",
+          "q": "Resume los pasos del proceso de coagulación mostrados.",
+          "a": "Se perfora vaso. 2) Tapón plaquetario. 3) Activador de protrombina inicia cascada. 4) Se forma fibrina que atrapa células y forma el coágulo",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "38eab30eacdff819cab4a0742",
+          "q": "¿Qué es hemofilia y cómo se trata?",
+          "a": "Trastorno hereditario por deficiencia de factor de coagulación; hemofilia A común en varones; sangrado interno (articulaciones/músculos, etc.) y riesgo fatal si afecta cerebro; se trata con transfusiones y factores de coagulación",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "22ca40f3931b4819cab4ae5a4",
+          "q": "Diferencia trombo vs émbolo y menciona consecuencias.",
+          "a": "Trombo: coágulo fijo en vaso intacto que puede bloquear flujo; émbolo: coágulo flotante; embolia pulmonar afecta oxigenación; émbolo cerebral causa stroke",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "5fbdef0bbb66419cab4bc1e6",
+          "q": "¿Qué menciona la presentación para prevenir condiciones tromboembólicas?",
+          "a": "Aspirina (inhibe tromboxano A₂), heparina (anticoagulante clínico) y warfarina (para susceptibles a fibrilación auricular).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "67ead02e0a046819cab4c8f6d",
+          "q": "¿Qué es una célula madre de médula ósea y qué potencial tiene?",
+          "a": "Puede dividirse y diferenciarse; médula ósea tiene células madre multipotentes para elementos formes y potencial para otros tejidos (hígado, hueso, grasa, cartílago, corazón, nervio)",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "624430ac2d95b819cab4d3a4d",
+          "q": "Describe el corazón (forma, tamaño y ubicación).",
+          "a": "Órgano muscular en forma de cono, tamaño de un puño; entre pulmones detrás del esternón; ápice hacia la izquierda; sobre el diafragma",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "bd721d66cd70819cab4db3ee",
+          "q": "¿Qué estructuras/vías principales aparecen en el diagrama del corazón?",
+          "a": "Grandes vasos (aorta, vena cava, arterias/venas pulmonares, tronco pulmonar, carótida/subclavia) y cámaras (aurículas/ventrículos) + ápice.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "daef1b007dc0419cab4eaa53",
+          "q": "Define miocardio, pericardio y endocardio.",
+          "a": "Miocardio: músculo cardiaco principal; pericardio: membrana serosa que rodea; endocardio: revestimiento interno (conectivo + endotelio).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "a9ac617b5e1c119cab4ee3b5",
+          "q": "¿Qué es el septum y cuáles son las 4 cámaras?",
+          "a": "Septum separa lado derecho/izquierdo; 2 aurículas (pared delgada) y 2 ventrículos (pared gruesa).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "53388d0f097bb19cab4f40ff",
+          "q": "¿Qué válvulas tiene el corazón y dónde están?",
+          "a": "2 AV: tricúspide (derecha) y mitral/bicúspide (izquierda) con cuerdas tendinosas; 2 semilunares: pulmonar (VD) y aórtica (VI).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "cfc67264ac0ae819cab4f9cde",
+          "q": "¿Qué idea clave muestra el esquema interno del corazón con válvulas?",
+          "a": "Relación de válvulas AV con cuerdas tendinosas y músculos papilares; y ubicación de válvulas semilunares pulmonar y aórtica.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "3a6ccd843cd35819cab5000ac",
+          "q": "¿Qué significa que el corazón es “dos bombas lado a lado”?",
+          "a": "Derecha impulsa circuito pulmonar (pulmones); izquierda impulsa circuito sistémico (tejidos del cuerpo).",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "5cb56613d24fa19cab50561f",
+          "q": "¿Qué significan RA/RV/LA/LV y cuál es la idea del flujo?",
+          "a": "RA aurícula derecha, RV ventrículo derecho, LA aurícula izquierda, LV ventrículo izquierdo; sangre va a pulmones y vuelve, luego sale por aorta al cuerpo",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "2c9ebe4ca488b19cab50a8ba",
+          "q": "Escribe la ruta completa de la sangre a través del corazón en orden.",
+          "a": "Vena cava → RA → tricúspide → RV → semilunar pulmonar → tronco/arterias pulmonares → pulmones → venas pulmonares → LA → mitral → LV → semilunar aórtica → aorta → cuerpo.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "d24851fcbd03a819cab5101af",
+          "q": "¿Qué es el ciclo cardiaco y qué significan sístole/diástole?",
+          "a": "Un latido = ciclo cardiaco: aurículas se contraen, luego ventrículos, luego relajación total; sístole = contracción, diástole = relajación; ~70/min.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "d2dfd0655422c19cab517819",
+          "q": "¿De dónde viene el sonido “lub‑dub” y qué es un murmullo?",
+          "a": "“Lub” = cierre válvulas AV; “Dub” = cierre válvulas semilunares; murmullo puede ser válvula con fuga.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "d40bad9518db119cab51e4d2",
+          "q": "Diferencia angina pectoris vs infarto de miocardio.",
+          "a": "Angina: dolor por déficit breve de flujo al miocardio; infarto: bloqueo coronario prolongado con muerte celular y cicatriz no contráctil",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "9e69453582b2e819cab524a58",
+          "q": "¿Cuáles son las partes del sistema de conducción del corazón?",
+          "a": "Nodo SA, nodo AV, ramas del haz AV (bundle) y fibras de Purkinje",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "a3976ace3407d819cab533d2c",
+          "q": "¿Qué es el control intrínseco del latido y dónde están SA y AV?",
+          "a": "Red de células musculares especializadas (no nervios) que generan impulsos; SA en pared dorsal superior de aurícula derecha; AV en base de pared de aurícula derecha",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "dc3d5cada161819cab53adad",
+          "q": "¿Por qué el nodo SA es el marcapasos y cómo viaja el impulso?",
+          "a": "Inicia el latido y contrae aurículas; impulso va al AV por el haz AV y luego a fibras de Purkinje → contracción ventricular",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "1bd183a9b7266819cab543799",
+          "q": "¿Qué controla extrínsecamente la frecuencia cardiaca según la diapositiva?",
+          "a": "Epinefrina y norepinefrina (médula suprarrenal) estimulan al corazón para bombear más rápido",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "433c1deb30d5b819cab546b85",
+          "q": "Define presión sistólica y diastólica, y qué pasa al alejarse de la aorta.",
+          "a": "Sistólica: presión en sístole ventricular; diastólica: en diástole; la presión cae en arterias/arteriolas y la diferencia entre ambas disminuye gradualmente",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        },
+        {
+          "id": "65d1d87ed235319cab54d34a",
+          "q": "Cómo se mide la presión arterial y cómo se expresa?",
+          "a": "Con esfigmomanómetro en arteria braquial; en mmHg con dos números (sistólica/diastólica), ej. 120/80.",
+          "stats": {
+            "know": 0,
+            "dont": 0
+          }
+        }
+      ]
+    }
+  ]
+}
