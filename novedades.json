@@ -1,20 +1,21 @@
 {
   "items": [
     {
-      "id": "2026-03-06-001",
+      "id": "0",
       "title": "Panel de Novedades",
       "body": "Ahora puedes ver cambios y avisos dentro de la app.",
-      "createdAt": "2026-03-06"
+      "createdAt": "5 de marzo de 2026"
     },
     {
-      "id": "102",
-      "title": "Actualizacionees:",
-      "body": "Si hay una versión nueva, futuramente tu elegiras si actualizas y te daras cuenta mucho mejor",
-      "createdAt": "2026-03-06"
+      "id": "0",
+      "title": "Actualizacion",
+      "body": "Actualizar la app es mas facil y proximamente tambien te preguntara en actualizar para que el usuario tenga mas control",
+      "createdAt": "5 de marzo de 2026"
     }
   ]
 
 }
+
 
 
 
