@@ -54,7 +54,7 @@ self.addEventListener("fetch", (event) => {
 const url = new URL(req.url);
 
   // ✅ Novedades: siempre traer de red (no cachear)
-  if (url.pathname.endsWith("/novedades.json")) {
+  if (url.pathname.endsWith("/novedades.js")) {
     event.respondWith(fetch(req));
     return;
   }
@@ -92,4 +92,5 @@ async function cacheFirst(req) {
   cache.put(req, fresh.clone());
   return fresh;
 }
+
 
