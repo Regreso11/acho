@@ -11,11 +11,13 @@
       "title": "Actualizacion",
       "body": "Actualizar la app es mas facil y proximamente tambien te preguntara en actualizar para que el usuario tenga mas control",
       "createdAt": "5 de marzo de 2026"
+    },
+    {
+      "id": "0",
+      "title": "Nueva actualizacion",
+      "body": "Le hemos cambiado el color a las franjas de cada Guide, hemos cambiado textos viejos, colores, cambio al modo examen, nuevo minimo de cartas 5 de 10 para iniciar examen y masss",
+      "createdAt": "8 de marzo de 2026"
     }
   ]
 
 }
-
-
-
-
