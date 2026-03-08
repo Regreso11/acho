@@ -17,8 +17,19 @@
       "title": "Nueva actualizacion",
       "body": "Le hemos cambiado el color a las franjas de cada Guide, hemos cambiado textos viejos, colores, cambio al modo examen, nuevo minimo de cartas 5 de 10 para iniciar examen y masss",
       "createdAt": "8 de marzo de 2026"
+    },
+    {
+      "id": "2",
+      "title": "Examen Multi mazos",
+      "body": "Hemos anadido que puedas hacer examenes con varios mazos que tengas. Para poder beneficiar mas tecnicas de estudios.",
+      "createdAt": "8 de marzo de 2026"
+    },
+    {
+      "id": "2",
+      "title": "Modo examen",
+      "body": "Sutil cambio a examen con 3 cartas minimo",
+      "createdAt": "8 de marzo de 2026"
     }
-  ]
 
+    ]
 }
-
