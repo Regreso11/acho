@@ -9,10 +9,10 @@
 
   <style>
     :root{
-      --bg: #0b1020;
-      --stroke: rgba(255,255,255,.14);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.68);
+      --bg: #000000;
+      --stroke: rgba(9, 255, 0, 0.14);
+      --text: rgba(191, 140, 64, 0.92);
+      --muted: rgba(255, 0, 0, 0.68);
       --accent: #7c3aed;
       --good:#22c55e;
       --danger:#ef4444;
@@ -359,10 +359,10 @@
     <section class="panel welcome" id="welcomeView">
       <h1>Tu espacio de estudio</h1>
       <p>
-        Mazos por tema. Offline. Minimalista.
-        Ahora: <b>Modo Examen</b> estricto con “La sé / No la sé” y <b>resumen obligatorio</b>.
+        Se puede usar offline, esta pensada para eso. 
       </p>
-
+      <p> Modos que hay: <br><b>Modo Repaso <br>Modo Examen</b>
+      </p>
       <div class="row">
         <button class="btn primary" id="enterBtn">🚀 Empezar</button>
         <button class="btn" id="quickDeckBtn">➕ Crear primer mazo</button>
@@ -426,7 +426,7 @@
         </div>
 
         <div class="hint">
-          Repaso: <b>Espacio</b> mostrar/ocultar • <b>←/→</b> anterior/siguiente • <b>M</b> mezclar
+        Consejo: Puedes tenerlo en donde tu quieras e importar tus mazos y estudiar
         </div>
       </div>
     </section>
@@ -456,7 +456,7 @@
         <button class="btn primary" id="saveCardDlg">Guardar</button>
       </div>
 
-      <div class="hint">Tip: texto largo + saltos de línea = perfecto.</div>
+      <div class="hint">:) Puedes escribir infinitamente, no mas pensar en decirlo resumido para meterlo en tus repasos. <br>Disfrutaaaaaaa :D</div>
     </div>
   </dialog>
 
@@ -544,7 +544,7 @@
       <button class="btn" id="markAllSeenBtn">✅ Marcar todo como visto</button>
     </div>
 
-    <div class="hint">Este panel funciona sin notificaciones push.</div>
+    <div class="hint">Este panel por el momento solo funciona con internet</div>
   </div>
 </dialog>
   <!-- Pop-up: Novedades (solo 1 vez por novedad nueva) -->
@@ -567,7 +567,7 @@
      * CONFIGURACIÓN (EDITABLE POR TI)
      **************************************************************/
     const STORE_KEY = "es_estudio_decks_v3";
-    const MIN_EXAM_CARDS = 10;          // <-- cambia este número cuando quieras
+    const MIN_EXAM_CARDS = 5;          // <-- cambia este número cuando quieras
     const SHUFFLE_STYLE = "random";     // "random" | "riffle"
 
     /**************************************************************
@@ -1668,7 +1668,6 @@ function showUpdatePrompt(reg) {
   </script>
 </body>
 </html>
-
 
 
 
