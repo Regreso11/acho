@@ -111,7 +111,7 @@
       border-radius: 999px;
       font-size:12px;
       font-weight:900;
-      color: var(--muted);
+      color:var(--muted);
     }
     .tag strong{ color: var(--text); }
 
@@ -241,7 +241,7 @@
     .summaryWrap{
       padding: 14px;
       max-height: 82vh;
-      overflow:auto; /* aquí obligamos el scroll */
+      overflow:auto;
       display:grid;
       gap:12px;
     }
@@ -329,9 +329,10 @@
       .brand{min-width: unset;}
       .paper{ max-height: 38vh; }
     }
+
     /* Permitir clicks en el pop-up de novedades (porque .toast tiene pointer-events:none) */
-#newsPopup { pointer-events: auto; }
-#newsPopup .btn { pointer-events: auto; }
+    #newsPopup { pointer-events: auto; }
+    #newsPopup .btn { pointer-events: auto; }
   </style>
 </head>
 
@@ -347,22 +348,22 @@
         <button class="btn primary" id="examToggleBtn" title="Modo examen">🧪 Examen</button>
         <button class="btn" id="newsBtn" title="Novedades">📰 Novedades</button>
         <button class="btn" id="exportAllBtn" title="Exportar todo">⬇️ Exportar todo</button>
+
         <span class="btn" title="Importar todo" style="position:relative; overflow:hidden;">
-  ⬆️ Importar todo
-  <input type="file" id="importAllInput"
-         style="position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;">
-</span>
+          ⬆️ Importar todo
+          <input type="file" id="importAllInput"
+                 style="position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;">
+        </span>
+
         <button class="btn danger flat" id="wipeBtn" title="Borrar TODO del navegador">🧨 Borrar todo</button>
       </div>
     </div>
 
     <section class="panel welcome" id="welcomeView">
       <h1>Tu espacio de estudio</h1>
-      <p>
-        Se puede usar offline, esta pensada para eso. 
-      </p>
-      <p> Modos que hay: <br><b>Modo Repaso <br>Modo Examen</b>
-      </p>
+      <p>Se puede usar offline, esta pensada para eso.</p>
+      <p>Modos que hay: <br><b>Modo Repaso <br>Modo Examen</b></p>
+
       <div class="row">
         <button class="btn primary" id="enterBtn">🚀 Empezar</button>
         <button class="btn" id="quickDeckBtn">➕ Crear primer mazo</button>
@@ -418,15 +419,15 @@
             <button class="btn danger" id="removeCardBtn">🗑️ Borrar</button>
             <button class="btn" id="exportDeckBtn">⬇️ Exportar mazo</button>
             <span class="btn" title="Importar en este mazo" style="position:relative; overflow:hidden;">
-  ⬆️ Importar mazo
-  <input type="file" id="importDeckInput"
-         style="position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;">
-</span>
+              ⬆️ Importar mazo
+              <input type="file" id="importDeckInput"
+                     style="position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;">
+            </span>
           </div>
         </div>
 
         <div class="hint">
-        Consejo: Puedes tenerlo en donde tu quieras e importar tus mazos y estudiar
+          Consejo: Puedes tenerlo en donde tu quieras e importar tus mazos y estudiar
         </div>
       </div>
     </section>
@@ -456,7 +457,7 @@
         <button class="btn primary" id="saveCardDlg">Guardar</button>
       </div>
 
-      <div class="hint">:) Puedes escribir infinitamente, no mas pensar en decirlo resumido para meterlo en tus repasos. <br>Disfrutaaaaaaa :D</div>
+      <div class="hint">:) Puedes escribir infinitamente. <br>Disfrutaaaaaaa :D</div>
     </div>
   </dialog>
 
@@ -487,13 +488,51 @@
     </div>
   </dialog>
 
+  <!-- Dialog: seleccionar mazos para examen -->
+  <dialog id="mergeExamDialog">
+    <div class="dlg">
+      <div class="head">
+        <h3>🧩 Examen con varios mazos</h3>
+        <button class="btn flat" id="closeMergeExamDlg">✖</button>
+      </div>
+
+      <div class="hint">Marca los mazos que quieres incluir. Mínimo 2.</div>
+
+      <div class="deckList" id="mergeDeckList"></div>
+
+      <div class="row" style="justify-content:flex-end;">
+        <button class="btn" id="cancelMergeExamBtn">Cancelar</button>
+        <button class="btn primary" id="startMergeExamBtn">🧪 Empezar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Dialog: Elegir tipo de examen -->
+  <dialog id="examChoiceDialog">
+    <div class="dlg">
+      <div class="head">
+        <h3>🧪 Tipo de examen</h3>
+        <button class="btn flat" id="closeExamChoiceDlg">✖</button>
+      </div>
+
+      <div class="hint">¿Qué quieres hacer?</div>
+
+      <div class="row" style="justify-content:flex-start;">
+        <button class="btn primary" id="examSingleBtn">📦 Solo este mazo</button>
+        <button class="btn" id="examMultiBtn">🧩 Varios mazos</button>
+        <button class="btn flat" id="examChoiceCancelBtn">Cancelar</button>
+      </div>
+
+      <div class="hint">Tip: “Varios mazos” no crea un mazo nuevo. Solo usa tarjetas de varios para este examen.</div>
+    </div>
+  </dialog>
+
   <!-- Dialog: Exam Summary (obligatorio) -->
   <dialog id="summaryDialog">
     <div class="summaryWrap" id="summaryWrap">
       <div class="dlg head" style="padding:0;">
         <div>
           <h3 style="margin:0;">📜 Resumen del Examen</h3>
-          
           <div class="hint" id="summarySubtitle">—</div>
         </div>
       </div>
@@ -507,7 +546,6 @@
 
       <div class="divider"></div>
 
-      <!-- Botones al FINAL para obligar scroll -->
       <div class="row" style="justify-content:flex-end;">
         <button class="btn" id="resumeStudyBtn">📚 Seguir repasando</button>
         <button class="btn primary" id="anotherExamBtn">🧪 Otro examen</button>
@@ -516,754 +554,860 @@
       <div class="hint">Fin del resumen. (Sí: esto es intencionalmente estricto).</div>
     </div>
   </dialog>
-<!-- Dialog: Novedades -->
-<dialog id="newsDialog">
-  <div class="summaryWrap" id="newsWrap">
-    <div class="dlg head" style="padding:0;">
-      <div>
-        <h3 style="margin:0;">📰 Novedades</h3>
-        <div class="hint" id="newsSubtitle">Cambios y avisos dentro de la app.</div>
+
+  <!-- Dialog: Novedades -->
+  <dialog id="newsDialog">
+    <div class="summaryWrap" id="newsWrap">
+      <div class="dlg head" style="padding:0;">
+        <div>
+          <h3 style="margin:0;">📰 Novedades</h3>
+          <div class="hint" id="newsSubtitle">Cambios y avisos dentro de la app.</div>
+        </div>
+        <button class="btn flat" id="closeNewsDlg">✖</button>
       </div>
-      <button class="btn flat" id="closeNewsDlg">✖</button>
+
+      <div class="summaryStats" id="updateBanner" style="display:none;">
+        <span class="chip"><b>✨ Hay una actualización lista</b></span>
+        <button class="btn primary" id="applyUpdateBtn">Actualizar ahora</button>
+        <span class="chip"><b>Nota:</b> tus mazos no se borran</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="resultList" id="newsList"></div>
+
+      <div class="divider"></div>
+
+      <div class="row" style="justify-content:flex-end;">
+        <button class="btn" id="markAllSeenBtn">✅ Marcar todo como visto</button>
+      </div>
+
+      <div class="hint">Este panel por el momento solo funciona con internet</div>
     </div>
+  </dialog>
 
-    <!-- Banner de actualización pendiente (si hay SW waiting) -->
-    <div class="summaryStats" id="updateBanner" style="display:none;">
-      <span class="chip"><b>✨ Hay una actualización lista</b></span>
-      <button class="btn primary" id="applyUpdateBtn">Actualizar ahora</button>
-      <span class="chip"><b>Nota:</b> tus mazos no se borran</span>
+  <!-- Pop-up: Novedades -->
+  <div class="toast" id="newsPopup" style="display:none; bottom:70px; max-width:min(620px, 92vw); border-radius:18px;">
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
+      <div style="display:grid; gap:3px;">
+        <div style="font-weight:900;">📰 Hay novedades nuevas</div>
+        <div style="font-size:12px; color:rgba(255,255,255,.75);" id="newsPopupText">—</div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+        <button class="btn primary" id="newsPopupViewBtn">Ver</button>
+        <button class="btn flat" id="newsPopupCloseBtn">Cerrar</button>
+      </div>
     </div>
-
-    <div class="divider"></div>
-
-    <div class="resultList" id="newsList"></div>
-
-    <div class="divider"></div>
-
-    <div class="row" style="justify-content:flex-end;">
-      <button class="btn" id="markAllSeenBtn">✅ Marcar todo como visto</button>
-    </div>
-
-    <div class="hint">Este panel por el momento solo funciona con internet</div>
   </div>
-</dialog>
-  <!-- Pop-up: Novedades (solo 1 vez por novedad nueva) -->
-<div class="toast" id="newsPopup" style="display:none; bottom:70px; max-width:min(620px, 92vw); border-radius:18px;">
-  <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
-    <div style="display:grid; gap:3px;">
-      <div style="font-weight:900;">📰 Hay novedades nuevas</div>
-      <div style="font-size:12px; color:rgba(255,255,255,.75);" id="newsPopupText">—</div>
-    </div>
-    <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-      <button class="btn primary" id="newsPopupViewBtn">Ver</button>
-      <button class="btn flat" id="newsPopupCloseBtn">Cerrar</button>
-    </div>
-  </div>
-</div>
+
   <div class="toast" id="toast"></div>
 
   <script>
-    /**************************************************************
-     * CONFIGURACIÓN (EDITABLE POR TI)
-     **************************************************************/
-    const STORE_KEY = "es_estudio_decks_v3";
-    const MIN_EXAM_CARDS = 5;          // <-- cambia este número cuando quieras
-    const SHUFFLE_STYLE = "random";     // "random" | "riffle"
+/**************************************************************
+ * CONFIGURACIÓN (EDITABLE POR TI)
+ **************************************************************/
+const STORE_KEY = "es_estudio_decks_v3";
+const MIN_EXAM_CARDS = 3;          // mínimo de tarjetas para permitir examen
+const SHUFFLE_STYLE = "random";    // "random" | "riffle"
 
-    /**************************************************************
-     * UTILIDADES
-     **************************************************************/
-    const ui = {
-      topBar: document.getElementById("topBar"),
-      welcomeView: document.getElementById("welcomeView"),
-      studyView: document.getElementById("studyView"),
+/**************************************************************
+ * UTILIDADES / UI
+ **************************************************************/
+const ui = {
+  topBar: document.getElementById("topBar"),
+  welcomeView: document.getElementById("welcomeView"),
+  studyView: document.getElementById("studyView"),
 
-      enterBtn: document.getElementById("enterBtn"),
-      quickDeckBtn: document.getElementById("quickDeckBtn"),
+  enterBtn: document.getElementById("enterBtn"),
+  quickDeckBtn: document.getElementById("quickDeckBtn"),
 
-      statusLine: document.getElementById("statusLine"),
-      deckTag: document.getElementById("deckTag"),
-      modeTag: document.getElementById("modeTag"),
-      progressTag: document.getElementById("progressTag"),
-      qArea: document.getElementById("qArea"),
-      aArea: document.getElementById("aArea"),
+  statusLine: document.getElementById("statusLine"),
+  deckTag: document.getElementById("deckTag"),
+  modeTag: document.getElementById("modeTag"),
+  progressTag: document.getElementById("progressTag"),
+  qArea: document.getElementById("qArea"),
+  aArea: document.getElementById("aArea"),
 
-      prevBtn: document.getElementById("prevBtn"),
-      nextBtn: document.getElementById("nextBtn"),
-      mixBtn: document.getElementById("mixBtn"),
-      revealBtn: document.getElementById("revealBtn"),
-      newCardBtn: document.getElementById("newCardBtn"),
-      editCardBtn: document.getElementById("editCardBtn"),
-      removeCardBtn: document.getElementById("removeCardBtn"),
+  prevBtn: document.getElementById("prevBtn"),
+  nextBtn: document.getElementById("nextBtn"),
+  mixBtn: document.getElementById("mixBtn"),
+  revealBtn: document.getElementById("revealBtn"),
+  newCardBtn: document.getElementById("newCardBtn"),
+  editCardBtn: document.getElementById("editCardBtn"),
+  removeCardBtn: document.getElementById("removeCardBtn"),
 
-      decksBtn: document.getElementById("decksBtn"),
-      examToggleBtn: document.getElementById("examToggleBtn"),
-      exportDeckBtn: document.getElementById("exportDeckBtn"),
-      importDeckInput: document.getElementById("importDeckInput"),
-      exportAllBtn: document.getElementById("exportAllBtn"),
-      importAllInput: document.getElementById("importAllInput"),
-      wipeBtn: document.getElementById("wipeBtn"),
+  decksBtn: document.getElementById("decksBtn"),
+  examToggleBtn: document.getElementById("examToggleBtn"),
+  exportDeckBtn: document.getElementById("exportDeckBtn"),
+  importDeckInput: document.getElementById("importDeckInput"),
+  exportAllBtn: document.getElementById("exportAllBtn"),
+  importAllInput: document.getElementById("importAllInput"),
+  wipeBtn: document.getElementById("wipeBtn"),
 
-      // Exam widgets
-      examArea: document.getElementById("examArea"),
-      userAnswer: document.getElementById("userAnswer"),
-      revealCompareBtn: document.getElementById("revealCompareBtn"),
-      knowBtn: document.getElementById("knowBtn"),
-      dontKnowBtn: document.getElementById("dontKnowBtn"),
-      exitExamBtn: document.getElementById("exitExamBtn"),
+  // Exam widgets
+  examArea: document.getElementById("examArea"),
+  userAnswer: document.getElementById("userAnswer"),
+  revealCompareBtn: document.getElementById("revealCompareBtn"),
+  knowBtn: document.getElementById("knowBtn"),
+  dontKnowBtn: document.getElementById("dontKnowBtn"),
+  exitExamBtn: document.getElementById("exitExamBtn"),
 
-      // Summary
-      summaryDialog: document.getElementById("summaryDialog"),
-      summaryWrap: document.getElementById("summaryWrap"),
-      summarySubtitle: document.getElementById("summarySubtitle"),
-      summaryStats: document.getElementById("summaryStats"),
-      resultList: document.getElementById("resultList"),
-      resumeStudyBtn: document.getElementById("resumeStudyBtn"),
-      anotherExamBtn: document.getElementById("anotherExamBtn"),
+  // Summary
+  summaryDialog: document.getElementById("summaryDialog"),
+  summaryWrap: document.getElementById("summaryWrap"),
+  summarySubtitle: document.getElementById("summarySubtitle"),
+  summaryStats: document.getElementById("summaryStats"),
+  resultList: document.getElementById("resultList"),
+  resumeStudyBtn: document.getElementById("resumeStudyBtn"),
+  anotherExamBtn: document.getElementById("anotherExamBtn"),
 
-      toast: document.getElementById("toast"),
+  toast: document.getElementById("toast"),
 
-      // dialogs
-      cardDialog: document.getElementById("cardDialog"),
-      cardDialogTitle: document.getElementById("cardDialogTitle"),
-      cardQ: document.getElementById("cardQ"),
-      cardA: document.getElementById("cardA"),
-      closeCardDlg: document.getElementById("closeCardDlg"),
-      cancelCardDlg: document.getElementById("cancelCardDlg"),
-      saveCardDlg: document.getElementById("saveCardDlg"),
+  // dialogs: card
+  cardDialog: document.getElementById("cardDialog"),
+  cardDialogTitle: document.getElementById("cardDialogTitle"),
+  cardQ: document.getElementById("cardQ"),
+  cardA: document.getElementById("cardA"),
+  closeCardDlg: document.getElementById("closeCardDlg"),
+  cancelCardDlg: document.getElementById("cancelCardDlg"),
+  saveCardDlg: document.getElementById("saveCardDlg"),
 
-      deckDialog: document.getElementById("deckDialog"),
-      closeDeckDlg: document.getElementById("closeDeckDlg"),
-      newDeckName: document.getElementById("newDeckName"),
-      createDeckBtn: document.getElementById("createDeckBtn"),
-      deckList: document.getElementById("deckList"),
-      // Novedades
-newsBtn: document.getElementById("newsBtn"),
-newsDialog: document.getElementById("newsDialog"),
-newsWrap: document.getElementById("newsWrap"),
-closeNewsDlg: document.getElementById("closeNewsDlg"),
-newsList: document.getElementById("newsList"),
-markAllSeenBtn: document.getElementById("markAllSeenBtn"),
-updateBanner: document.getElementById("updateBanner"),
-applyUpdateBtn: document.getElementById("applyUpdateBtn"),
+  // dialogs: deck
+  deckDialog: document.getElementById("deckDialog"),
+  closeDeckDlg: document.getElementById("closeDeckDlg"),
+  newDeckName: document.getElementById("newDeckName"),
+  createDeckBtn: document.getElementById("createDeckBtn"),
+  deckList: document.getElementById("deckList"),
 
-// Pop-up Novedades
-newsPopup: document.getElementById("newsPopup"),
-newsPopupText: document.getElementById("newsPopupText"),
-newsPopupViewBtn: document.getElementById("newsPopupViewBtn"),
-newsPopupCloseBtn: document.getElementById("newsPopupCloseBtn"),
-    };
+  // Exam choice
+  examChoiceDialog: document.getElementById("examChoiceDialog"),
+  closeExamChoiceDlg: document.getElementById("closeExamChoiceDlg"),
+  examSingleBtn: document.getElementById("examSingleBtn"),
+  examMultiBtn: document.getElementById("examMultiBtn"),
+  examChoiceCancelBtn: document.getElementById("examChoiceCancelBtn"),
 
-    const app = {
-      data: { activeDeckId: null, decks: [] },
-      view: {
-        index: 0,
-        answerVisible: false,
-        editMode: "new",        // card dialog: "new"|"edit"
-        mode: "study",          // "study"|"exam"
-        examQueue: [],          // array of card IDs in exam order
-        examPos: 0,             // current position in examQueue (no UI counter)
-        examRevealed: false,    // true after reveal/compare; must choose know/dontknow
-        examLog: [],            // [{cardId, verdict:"know"|"dont", userAnswer, at}]
-        examStartedAt: null,
-        examEndedEarly: false
-      }
-    };
+  // Multi-deck exam selector
+  mergeExamDialog: document.getElementById("mergeExamDialog"),
+  closeMergeExamDlg: document.getElementById("closeMergeExamDlg"),
+  mergeDeckList: document.getElementById("mergeDeckList"),
+  cancelMergeExamBtn: document.getElementById("cancelMergeExamBtn"),
+  startMergeExamBtn: document.getElementById("startMergeExamBtn"),
 
-    function uid(){
-      return Math.random().toString(16).slice(2) + Date.now().toString(16);
+  // Novedades
+  newsBtn: document.getElementById("newsBtn"),
+  newsDialog: document.getElementById("newsDialog"),
+  newsWrap: document.getElementById("newsWrap"),
+  closeNewsDlg: document.getElementById("closeNewsDlg"),
+  newsList: document.getElementById("newsList"),
+  markAllSeenBtn: document.getElementById("markAllSeenBtn"),
+  updateBanner: document.getElementById("updateBanner"),
+  applyUpdateBtn: document.getElementById("applyUpdateBtn"),
+
+  // Pop-up Novedades
+  newsPopup: document.getElementById("newsPopup"),
+  newsPopupText: document.getElementById("newsPopupText"),
+  newsPopupViewBtn: document.getElementById("newsPopupViewBtn"),
+  newsPopupCloseBtn: document.getElementById("newsPopupCloseBtn"),
+};
+
+const app = {
+  data: { activeDeckId: null, decks: [] },
+  view: {
+    index: 0,
+    answerVisible: false,
+    editMode: "new",        // "new"|"edit"
+    mode: "study",          // "study"|"exam"
+
+    // ✅ EXAM: usamos refs SIEMPRE
+    examQueue: [],          // [{ deckId, cardId }]
+    examPos: 0,
+    examRevealed: false,
+
+    examLog: [],            // [{ deckId, cardId, verdict, userAnswer, at }]
+    examStartedAt: null,
+    examEndedEarly: false
+  }
+};
+
+function uid(){
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
+
+function toast(msg){
+  ui.toast.textContent = msg;
+  ui.toast.classList.add("on");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => ui.toast.classList.remove("on"), 1500);
+}
+
+function saveStore(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(app.data));
+}
+
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return;
+    const parsed = JSON.parse(raw);
+    if(parsed && typeof parsed === "object" && Array.isArray(parsed.decks)){
+      app.data = parsed;
     }
+  }catch(err){
+    console.warn("No se pudo cargar:", err);
+  }
+}
 
-    function toast(msg){
-      ui.toast.textContent = msg;
-      ui.toast.classList.add("on");
-      clearTimeout(toast._t);
-      toast._t = setTimeout(()=> ui.toast.classList.remove("on"), 1500);
+function getDeck(){
+  return app.data.decks.find(d => d.id === app.data.activeDeckId) || null;
+}
+
+function ensureDeck(){
+  if(!app.data.decks.length){
+    const d = { id: uid(), name: "Mi primer mazo", cards: [] };
+    app.data.decks.push(d);
+    app.data.activeDeckId = d.id;
+    saveStore();
+  }
+  if(!app.data.activeDeckId){
+    app.data.activeDeckId = app.data.decks[0].id;
+  }
+}
+
+function clampIndex(){
+  const deck = getDeck();
+  const n = deck ? deck.cards.length : 0;
+  if(n === 0){ app.view.index = 0; return; }
+  if(app.view.index < 0) app.view.index = n - 1;
+  if(app.view.index >= n) app.view.index = 0;
+}
+
+function setAnswerVisible(on){
+  app.view.answerVisible = on;
+  if(on){
+    ui.aArea.style.display = "block";
+    ui.aArea.classList.add("answerBox");
+    ui.revealBtn.textContent = "🙈 Ocultar";
+  }else{
+    ui.aArea.style.display = "none";
+    ui.revealBtn.textContent = "👁️ Mostrar";
+  }
+}
+
+/**************************************************************
+ * SHUFFLES
+ **************************************************************/
+function shuffleRandom(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function shuffleRiffle(arr, rounds = 5){
+  let a = arr.slice();
+  for(let r=0; r<rounds; r++){
+    const cut = Math.floor(a.length * (0.45 + Math.random()*0.1));
+    let left = a.slice(0, cut);
+    let right = a.slice(cut);
+    const out = [];
+    while(left.length || right.length){
+      const pickLeft = (Math.random() < (left.length / (left.length + right.length)));
+      if(pickLeft && left.length) out.push(left.shift());
+      else if(right.length) out.push(right.shift());
+      else out.push(left.shift());
     }
+    a = out;
+  }
+  return a;
+}
 
-    function saveStore(){
-      localStorage.setItem(STORE_KEY, JSON.stringify(app.data));
+function makeShuffledIds(cards){
+  const ids = cards.map(c => c.id);
+  if(SHUFFLE_STYLE === "riffle") return shuffleRiffle(ids);
+  return shuffleRandom(ids);
+}
+
+/**************************************************************
+ * NORMALIZAR TARJETA (stats invisibles)
+ **************************************************************/
+function normalizeCard(card){
+  if(!card.stats) card.stats = { know:0, dont:0 };
+  if(typeof card.stats.know !== "number") card.stats.know = Number(card.stats.know||0);
+  if(typeof card.stats.dont !== "number") card.stats.dont = Number(card.stats.dont||0);
+  return card;
+}
+
+function escapeHTML(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/**************************************************************
+ * EXAM: Helpers
+ **************************************************************/
+function buildRefsForDeck(deck){
+  deck.cards = (deck.cards || []).map(normalizeCard);
+  return deck.cards.map(c => ({ deckId: deck.id, cardId: c.id }));
+}
+
+function buildMergedRefs(deckIds){
+  const refs = [];
+  for(const did of deckIds){
+    const d = app.data.decks.find(x => x.id === did);
+    if(!d || !Array.isArray(d.cards)) continue;
+    d.cards = d.cards.map(normalizeCard);
+    for(const c of d.cards){
+      refs.push({ deckId: did, cardId: c.id });
     }
+  }
+  return refs;
+}
 
-    function loadStore(){
-      try{
-        const raw = localStorage.getItem(STORE_KEY);
-        if(!raw) return;
-        const parsed = JSON.parse(raw);
-        if(parsed && typeof parsed === "object" && Array.isArray(parsed.decks)){
-          app.data = parsed;
-        }
-      }catch(err){
-        console.warn("No se pudo cargar:", err);
-      }
-    }
+function startExamWithRefs(refs, labelText){
+  if(refs.length < MIN_EXAM_CARDS){
+    toast(`⚠️ Necesitas mínimo ${MIN_EXAM_CARDS} tarjetas`);
+    return false;
+  }
 
-    function getDeck(){
-      return app.data.decks.find(d => d.id === app.data.activeDeckId) || null;
-    }
+  app.view.mode = "exam";
+  app.view.examQueue = (SHUFFLE_STYLE === "riffle") ? shuffleRiffle(refs.slice()) : shuffleRandom(refs.slice());
+  app.view.examPos = 0;
+  app.view.examRevealed = false;
+  app.view.examLog = [];
+  app.view.examStartedAt = Date.now();
+  app.view.examEndedEarly = false;
 
-    function ensureDeck(){
-      if(!app.data.decks.length){
-        const d = { id: uid(), name: "Mi primer mazo", cards: [] };
-        app.data.decks.push(d);
-        app.data.activeDeckId = d.id;
-        saveStore();
-      }
-      if(!app.data.activeDeckId){
-        app.data.activeDeckId = app.data.decks[0].id;
-      }
-    }
+  ui.userAnswer.value = "";
+  ui.aArea.style.display = "none";
+  ui.knowBtn.style.display = "none";
+  ui.dontKnowBtn.style.display = "none";
+  ui.revealCompareBtn.disabled = false;
 
-    function clampIndex(){
-      const deck = getDeck();
-      const n = deck ? deck.cards.length : 0;
-      if(n === 0){ app.view.index = 0; return; }
-      if(app.view.index < 0) app.view.index = n - 1;
-      if(app.view.index >= n) app.view.index = 0;
-    }
+  render();
+  toast(labelText || "🧪 Examen iniciado");
+  return true;
+}
 
-    function setAnswerVisible(on){
-      app.view.answerVisible = on;
-      if(on){
-        ui.aArea.style.display = "block";
-        ui.aArea.classList.add("answerBox");
-        ui.revealBtn.textContent = "🙈 Ocultar";
-      }else{
-        ui.aArea.style.display = "none";
-        ui.revealBtn.textContent = "👁️ Mostrar";
-      }
-    }
+function startMultiDeckExam(deckIds){
+  const refs = buildMergedRefs(deckIds);
+  return startExamWithRefs(refs, "🧩 Examen (varios mazos) iniciado");
+}
 
-    /**************************************************************
-     * SHUFFLES
-     **************************************************************/
-    function shuffleRandom(arr){
-      for(let i = arr.length - 1; i > 0; i--){
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
+function openMergeExamDialog(){
+  ui.mergeDeckList.innerHTML = "";
+  const decks = app.data.decks.slice();
 
-    function shuffleRiffle(arr, rounds = 5){
-      let a = arr.slice();
-      for(let r=0; r<rounds; r++){
-        const cut = Math.floor(a.length * (0.45 + Math.random()*0.1));
-        let left = a.slice(0, cut);
-        let right = a.slice(cut);
-        const out = [];
-        while(left.length || right.length){
-          const pickLeft = (Math.random() < (left.length / (left.length + right.length)));
-          if(pickLeft && left.length) out.push(left.shift());
-          else if(right.length) out.push(right.shift());
-          else out.push(left.shift());
-        }
-        a = out;
-      }
-      return a;
-    }
+  if(decks.length < 2){
+    toast("⚠️ Necesitas al menos 2 mazos");
+    return;
+  }
 
-    function makeShuffledIds(cards){
-      const ids = cards.map(c => c.id);
-      if(SHUFFLE_STYLE === "riffle") return shuffleRiffle(ids);
-      return shuffleRandom(ids);
-    }
+  const active = app.data.activeDeckId;
 
-    /**************************************************************
-     * NORMALIZAR TARJETA (stats invisibles)
-     **************************************************************/
-    function normalizeCard(card){
-      if(!card.stats) card.stats = { know:0, dont:0 };
-      if(typeof card.stats.know !== "number") card.stats.know = Number(card.stats.know||0);
-      if(typeof card.stats.dont !== "number") card.stats.dont = Number(card.stats.dont||0);
-      return card;
-    }
+  for(const d of decks){
+    const row = document.createElement("div");
+    row.className = "deckItem";
 
-    /**************************************************************
-     * RENDER
-     **************************************************************/
-    function render(){
-      const deck = getDeck();
-      const countDecks = app.data.decks.length;
-      const countCards = deck ? deck.cards.length : 0;
+    const left = document.createElement("div");
+    left.className = "name";
+    left.innerHTML = `<strong>${escapeHTML(d.name)}</strong><span>${(d.cards||[]).length} tarjeta(s)</span>`;
 
-      ui.statusLine.textContent = `${countDecks} mazo(s) • ${countCards} tarjeta(s) • Offline`;
-      ui.deckTag.innerHTML = `<strong>Mazo:</strong> ${deck ? deck.name : "—"}`;
+    const ops = document.createElement("div");
+    ops.className = "ops";
 
-      const isExam = app.view.mode === "exam";
-      ui.modeTag.innerHTML = `<strong>Modo:</strong> ${isExam ? "Examen" : "Repaso"}`;
+    const label = document.createElement("label");
+    label.style.display = "inline-flex";
+    label.style.alignItems = "center";
+    label.style.gap = "8px";
+    label.style.cursor = "pointer";
 
-      // UI toggles for exam/study
-      ui.examArea.style.display = isExam ? "grid" : "none";
-      ui.exitExamBtn.style.display = isExam ? "inline-flex" : "none";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.value = d.id;
+    cb.checked = (d.id === active);
 
-      ui.revealBtn.style.display = isExam ? "none" : "inline-flex";
-      ui.prevBtn.style.display = isExam ? "none" : "inline-flex";
-      ui.mixBtn.style.display = isExam ? "none" : "inline-flex";
-      ui.progressTag.style.display = isExam ? "none" : "inline-flex"; // sin contador en examen
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode("Incluir"));
 
-      ui.examToggleBtn.textContent = isExam ? "⛔ Salir examen" : "🧪 Examen";
+    ops.appendChild(label);
+    row.appendChild(left);
+    row.appendChild(ops);
 
-      if(!deck || deck.cards.length === 0){
-        ui.qArea.textContent = "No hay tarjetas en este mazo.\n\nPulsa “Nueva tarjeta” para crear la primera.";
-        ui.aArea.textContent = "";
-        ui.progressTag.innerHTML = `<strong>Progreso:</strong> 0/0`;
-        setAnswerVisible(false);
-        resetExamWidgets();
-        return;
-      }
+    ui.mergeDeckList.appendChild(row);
+  }
 
-      if(!isExam){
-        clampIndex();
-        const card = normalizeCard(deck.cards[app.view.index]);
-        ui.qArea.textContent = card.q || "(sin pregunta)";
-        ui.aArea.textContent = card.a || "(sin respuesta)";
-        ui.progressTag.innerHTML = `<strong>Progreso:</strong> ${app.view.index + 1}/${deck.cards.length}`;
-        setAnswerVisible(false);
-        resetExamWidgets();
-        return;
-      }
+  ui.mergeExamDialog.showModal();
+  ui.mergeDeckList.scrollTop = 0;
+}
 
-      // EXAM MODE
-      deck.cards = deck.cards.map(normalizeCard);
-      const cid = app.view.examQueue[app.view.examPos];
-      const card = deck.cards.find(c => c.id === cid) || deck.cards[0];
-      ui.qArea.textContent = card.q || "(sin pregunta)";
-      ui.aArea.textContent = card.a || "(sin respuesta)";
+function getSelectedMergeDeckIds(){
+  const boxes = ui.mergeDeckList.querySelectorAll('input[type="checkbox"]');
+  const ids = [];
+  boxes.forEach(b => { if(b.checked) ids.push(b.value); });
+  return ids;
+}
 
-      ui.aArea.style.display = app.view.examRevealed ? "block" : "none";
-      ui.aArea.classList.add("answerBox");
-    }
+/**************************************************************
+ * RENDER
+ **************************************************************/
+function resetExamWidgets(){
+  app.view.examRevealed = false;
+  ui.userAnswer.value = "";
+  ui.knowBtn.style.display = "none";
+  ui.dontKnowBtn.style.display = "none";
+  ui.revealCompareBtn.disabled = false;
+}
 
-    function resetExamWidgets(){
-      app.view.examRevealed = false;
-      ui.userAnswer.value = "";
-      ui.knowBtn.style.display = "none";
-      ui.dontKnowBtn.style.display = "none";
-      ui.revealCompareBtn.disabled = false;
-    }
+function render(){
+  const deck = getDeck();
+  const countDecks = app.data.decks.length;
+  const countCards = deck ? deck.cards.length : 0;
 
-    /**************************************************************
-     * APP FLOW
-     **************************************************************/
-    function showApp(){
-      ui.welcomeView.style.display = "none";
-      ui.studyView.style.display = "grid";
-      ui.topBar.style.display = "flex";
-      render();
-      toast("📚 Listo");
-      maybeShowNewsPopupOnce();
-    }
+  ui.statusLine.textContent = `${countDecks} mazo(s) • ${countCards} tarjeta(s) • Offline`;
+  ui.deckTag.innerHTML = `<strong>Mazo:</strong> ${deck ? escapeHTML(deck.name) : "—"}`;
 
-    /**************************************************************
-     * DECK MANAGER
-     **************************************************************/
-    function openDecks(){
-      refreshDeckList();
-      ui.deckDialog.showModal();
-      setTimeout(() => ui.newDeckName.focus(), 50);
-    }
+  const isExam = app.view.mode === "exam";
+  ui.modeTag.innerHTML = `<strong>Modo:</strong> ${isExam ? "Examen" : "Repaso"}`;
 
-    function refreshDeckList(){
-      ui.deckList.innerHTML = "";
-      const decks = app.data.decks.slice();
-      if(!decks.length){
-        const empty = document.createElement("div");
-        empty.className = "hint";
-        empty.textContent = "Aún no tienes mazos. Crea uno arriba.";
-        ui.deckList.appendChild(empty);
-        return;
-      }
+  ui.examArea.style.display = isExam ? "grid" : "none";
+  ui.exitExamBtn.style.display = isExam ? "inline-flex" : "none";
 
-      decks.forEach(d => {
-        const item = document.createElement("div");
-        item.className = "deckItem";
+  ui.revealBtn.style.display = isExam ? "none" : "inline-flex";
+  ui.prevBtn.style.display = isExam ? "none" : "inline-flex";
+  ui.mixBtn.style.display = isExam ? "none" : "inline-flex";
+  ui.progressTag.style.display = isExam ? "none" : "inline-flex";
 
-        const left = document.createElement("div");
-        left.className = "name";
-        const title = document.createElement("strong");
-        title.textContent = d.name;
-        const meta = document.createElement("span");
-        meta.textContent = `${(d.cards||[]).length} tarjeta(s)`;
-        left.appendChild(title);
-        left.appendChild(meta);
+  ui.examToggleBtn.textContent = isExam ? "⛔ Salir examen" : "🧪 Examen";
 
-        const ops = document.createElement("div");
-        ops.className = "ops";
+  if(!deck || deck.cards.length === 0){
+    ui.qArea.textContent = "No hay tarjetas en este mazo.\n\nPulsa “Nueva tarjeta” para crear la primera.";
+    ui.aArea.textContent = "";
+    ui.progressTag.innerHTML = `<strong>Progreso:</strong> 0/0`;
+    setAnswerVisible(false);
+    resetExamWidgets();
+    return;
+  }
 
-        const useBtn = document.createElement("button");
-        useBtn.className = "btn good";
-        useBtn.textContent = (d.id === app.data.activeDeckId) ? "✅ En uso" : "Usar";
-        useBtn.disabled = (d.id === app.data.activeDeckId);
-        useBtn.addEventListener("click", () => {
-          app.data.activeDeckId = d.id;
-          app.view.index = 0;
-          exitExam(true); // salir del examen (si estaba) y limpiar
-          saveStore();
-          ui.deckDialog.close();
-          render();
-          toast("📦 Mazo cambiado");
-        });
+  if(!isExam){
+    clampIndex();
+    const card = normalizeCard(deck.cards[app.view.index]);
+    ui.qArea.textContent = card.q || "(sin pregunta)";
+    ui.aArea.textContent = card.a || "(sin respuesta)";
+    ui.progressTag.innerHTML = `<strong>Progreso:</strong> ${app.view.index + 1}/${deck.cards.length}`;
+    setAnswerVisible(false);
+    resetExamWidgets();
+    return;
+  }
 
-        const renameBtn = document.createElement("button");
-        renameBtn.className = "btn";
-        renameBtn.textContent = "✏️ Renombrar";
-        renameBtn.addEventListener("click", () => {
-          const name = prompt("Nuevo nombre del mazo:", d.name);
-          if(!name) return;
-          d.name = name.trim();
-          saveStore();
-          refreshDeckList();
-          render();
-          toast("✏️ Renombrado");
-        });
+  const ref = app.view.examQueue[app.view.examPos];
+  if(!ref){
+    hardExitToStudy();
+    toast("⚠️ Examen vacío");
+    return;
+  }
 
-        const delBtn = document.createElement("button");
-        delBtn.className = "btn danger";
-        delBtn.textContent = "🗑️ Borrar";
-        delBtn.addEventListener("click", () => {
-          if(!confirm(`¿Borrar el mazo “${d.name}”? Esto elimina sus ${(d.cards||[]).length} tarjeta(s).`)) return;
-          app.data.decks = app.data.decks.filter(x => x.id !== d.id);
-          if(app.data.activeDeckId === d.id){
-            app.data.activeDeckId = app.data.decks[0]?.id || null;
-            app.view.index = 0;
-            exitExam(true);
-          }
-          saveStore();
-          refreshDeckList();
-          render();
-          toast("🗑️ Mazo borrado");
-        });
+  const d2 = app.data.decks.find(x => x.id === ref.deckId) || deck;
+  const card = (d2?.cards || []).find(c => c.id === ref.cardId) || deck.cards[0];
+  normalizeCard(card);
 
-        ops.appendChild(useBtn);
-        ops.appendChild(renameBtn);
-        ops.appendChild(delBtn);
+  ui.qArea.textContent = card.q || "(sin pregunta)";
+  ui.aArea.textContent = card.a || "(sin respuesta)";
 
-        item.appendChild(left);
-        item.appendChild(ops);
-        ui.deckList.appendChild(item);
-      });
-    }
+  ui.aArea.style.display = app.view.examRevealed ? "block" : "none";
+  ui.aArea.classList.add("answerBox");
+}
 
-    function createDeck(name){
-      const n = (name || "").trim();
-      if(!n){ toast("⚠️ Escribe un nombre"); return; }
-      const d = { id: uid(), name: n, cards: [] };
-      app.data.decks.unshift(d);
+/**************************************************************
+ * APP FLOW
+ **************************************************************/
+function showApp(){
+  ui.welcomeView.style.display = "none";
+  ui.studyView.style.display = "grid";
+  ui.topBar.style.display = "flex";
+  render();
+  toast("📚 Listo");
+  maybeShowNewsPopupOnce();
+}
+
+/**************************************************************
+ * DECK MANAGER
+ **************************************************************/
+function openDecks(){
+  refreshDeckList();
+  ui.deckDialog.showModal();
+  setTimeout(() => ui.newDeckName.focus(), 50);
+}
+
+function refreshDeckList(){
+  ui.deckList.innerHTML = "";
+  const decks = app.data.decks.slice();
+  if(!decks.length){
+    const empty = document.createElement("div");
+    empty.className = "hint";
+    empty.textContent = "Aún no tienes mazos. Crea uno arriba.";
+    ui.deckList.appendChild(empty);
+    return;
+  }
+
+  decks.forEach(d => {
+    const item = document.createElement("div");
+    item.className = "deckItem";
+
+    const left = document.createElement("div");
+    left.className = "name";
+    const title = document.createElement("strong");
+    title.textContent = d.name;
+    const meta = document.createElement("span");
+    meta.textContent = `${(d.cards||[]).length} tarjeta(s)`;
+    left.appendChild(title);
+    left.appendChild(meta);
+
+    const ops = document.createElement("div");
+    ops.className = "ops";
+
+    const useBtn = document.createElement("button");
+    useBtn.className = "btn good";
+    useBtn.textContent = (d.id === app.data.activeDeckId) ? "✅ En uso" : "Usar";
+    useBtn.disabled = (d.id === app.data.activeDeckId);
+    useBtn.addEventListener("click", () => {
       app.data.activeDeckId = d.id;
       app.view.index = 0;
       exitExam(true);
       saveStore();
+      ui.deckDialog.close();
+      render();
+      toast("📦 Mazo cambiado");
+    });
+
+    const renameBtn = document.createElement("button");
+    renameBtn.className = "btn";
+    renameBtn.textContent = "✏️ Renombrar";
+    renameBtn.addEventListener("click", () => {
+      const name = prompt("Nuevo nombre del mazo:", d.name);
+      if(!name) return;
+      d.name = name.trim();
+      saveStore();
       refreshDeckList();
       render();
-      toast("➕ Mazo creado");
-    }
+      toast("✏️ Renombrado");
+    });
 
-    /**************************************************************
-     * CARDS
-     **************************************************************/
-    function openCardDialog(mode){
-      const deck = getDeck();
-      if(!deck){ toast("⚠️ No hay mazo"); return; }
-
-      app.view.editMode = mode;
-
-      if(mode === "new"){
-        ui.cardDialogTitle.textContent = "➕ Nueva tarjeta";
-        ui.cardQ.value = "";
-        ui.cardA.value = "";
-      }else{
-        if(deck.cards.length === 0){ toast("⚠️ No hay tarjetas"); return; }
-        const c = deck.cards[app.view.index];
-        ui.cardDialogTitle.textContent = "✏️ Editar tarjeta";
-        ui.cardQ.value = c.q || "";
-        ui.cardA.value = c.a || "";
+    const delBtn = document.createElement("button");
+    delBtn.className = "btn danger";
+    delBtn.textContent = "🗑️ Borrar";
+    delBtn.addEventListener("click", () => {
+      if(!confirm(`¿Borrar el mazo “${d.name}”? Esto elimina sus ${(d.cards||[]).length} tarjeta(s).`)) return;
+      app.data.decks = app.data.decks.filter(x => x.id !== d.id);
+      if(app.data.activeDeckId === d.id){
+        app.data.activeDeckId = app.data.decks[0]?.id || null;
+        app.view.index = 0;
+        exitExam(true);
       }
-
-      ui.cardDialog.showModal();
-      setTimeout(() => ui.cardQ.focus(), 50);
-    }
-
-    function saveCardFromDialog(){
-      const deck = getDeck();
-      if(!deck) return;
-
-      const q = ui.cardQ.value.trim();
-      const a = ui.cardA.value.trim();
-      if(!q || !a){
-        toast("⚠️ Completa pregunta y respuesta");
-        return;
-      }
-
-      if(app.view.editMode === "new"){
-        deck.cards.push(normalizeCard({ id: uid(), q, a }));
-        app.view.index = deck.cards.length - 1;
-        toast("✅ Tarjeta creada");
-      }else{
-        const c = deck.cards[app.view.index];
-        c.q = q;
-        c.a = a;
-        normalizeCard(c);
-        toast("💾 Cambios guardados");
-      }
-
       saveStore();
-      ui.cardDialog.close();
+      refreshDeckList();
       render();
+      toast("🗑️ Mazo borrado");
+    });
+
+    ops.appendChild(useBtn);
+    ops.appendChild(renameBtn);
+    ops.appendChild(delBtn);
+
+    item.appendChild(left);
+    item.appendChild(ops);
+    ui.deckList.appendChild(item);
+  });
+}
+
+function createDeck(name){
+  const n = (name || "").trim();
+  if(!n){ toast("⚠️ Escribe un nombre"); return; }
+  const d = { id: uid(), name: n, cards: [] };
+  app.data.decks.unshift(d);
+  app.data.activeDeckId = d.id;
+  app.view.index = 0;
+  exitExam(true);
+  saveStore();
+  refreshDeckList();
+  render();
+  toast("➕ Mazo creado");
+}
+
+/**************************************************************
+ * CARDS
+ **************************************************************/
+function openCardDialog(mode){
+  const deck = getDeck();
+  if(!deck){ toast("⚠️ No hay mazo"); return; }
+
+  app.view.editMode = mode;
+
+  if(mode === "new"){
+    ui.cardDialogTitle.textContent = "➕ Nueva tarjeta";
+    ui.cardQ.value = "";
+    ui.cardA.value = "";
+  }else{
+    if(deck.cards.length === 0){ toast("⚠️ No hay tarjetas"); return; }
+    const c = deck.cards[app.view.index];
+    ui.cardDialogTitle.textContent = "✏️ Editar tarjeta";
+    ui.cardQ.value = c.q || "";
+    ui.cardA.value = c.a || "";
+  }
+
+  ui.cardDialog.showModal();
+  setTimeout(() => ui.cardQ.focus(), 50);
+}
+
+function saveCardFromDialog(){
+  const deck = getDeck();
+  if(!deck) return;
+
+  const q = ui.cardQ.value.trim();
+  const a = ui.cardA.value.trim();
+  if(!q || !a){
+    toast("⚠️ Completa pregunta y respuesta");
+    return;
+  }
+
+  if(app.view.editMode === "new"){
+    deck.cards.push(normalizeCard({ id: uid(), q, a }));
+    app.view.index = deck.cards.length - 1;
+    toast("✅ Tarjeta creada");
+  }else{
+    const c = deck.cards[app.view.index];
+    c.q = q;
+    c.a = a;
+    normalizeCard(c);
+    toast("💾 Cambios guardados");
+  }
+
+  saveStore();
+  ui.cardDialog.close();
+  render();
+}
+
+function removeCurrentCard(){
+  const deck = getDeck();
+  if(!deck || deck.cards.length === 0) return;
+  if(!confirm("¿Borrar esta tarjeta?")) return;
+  deck.cards.splice(app.view.index, 1);
+  if(app.view.index >= deck.cards.length) app.view.index = 0;
+  exitExam(true);
+  saveStore();
+  render();
+  toast("🗑️ Tarjeta borrada");
+}
+
+function shuffleDeckStudy(){
+  const deck = getDeck();
+  if(!deck || deck.cards.length < 2) return;
+  deck.cards = deck.cards.map(normalizeCard);
+  const ids = makeShuffledIds(deck.cards);
+  const map = new Map(deck.cards.map(c => [c.id, c]));
+  deck.cards = ids.map(id => map.get(id)).filter(Boolean);
+  app.view.index = 0;
+  saveStore();
+  render();
+  toast("🔀 Mezclado");
+}
+
+/**************************************************************
+ * EXAM MODE
+ **************************************************************/
+function enterExam(){
+  const deck = getDeck();
+  if(!deck){ toast("⚠️ No hay mazo"); return; }
+
+  const refs = buildRefsForDeck(deck);
+  if(refs.length < MIN_EXAM_CARDS){
+    toast(`⚠️ Necesitas mínimo ${MIN_EXAM_CARDS} tarjetas para examen`);
+    return;
+  }
+  startExamWithRefs(refs, "🧪 Examen (solo este mazo) iniciado");
+}
+
+function exitExam(forceNoSummary){
+  if(app.view.mode !== "exam") return;
+
+  if(forceNoSummary){
+    hardExitToStudy();
+    return;
+  }
+
+  if(app.view.examLog.length === 0){
+    hardExitToStudy();
+    toast("Examen cancelado (sin respuestas)");
+    return;
+  }
+
+  app.view.examEndedEarly = true;
+  showSummary();
+}
+
+function hardExitToStudy(){
+  app.view.mode = "study";
+  app.view.examQueue = [];
+  app.view.examPos = 0;
+  app.view.examRevealed = false;
+  app.view.examLog = [];
+  app.view.examStartedAt = null;
+  app.view.examEndedEarly = false;
+  ui.userAnswer.value = "";
+  render();
+}
+
+function examRevealCompare(){
+  if(app.view.mode !== "exam") return;
+  app.view.examRevealed = true;
+  ui.aArea.style.display = "block";
+  ui.knowBtn.style.display = "inline-flex";
+  ui.dontKnowBtn.style.display = "inline-flex";
+  ui.revealCompareBtn.disabled = true;
+  toast("Marca: ✅ La sé / ❌ No la sé");
+}
+
+function examMark(know){
+  if(app.view.mode !== "exam") return;
+
+  const activeDeck = getDeck();
+  if(!activeDeck) return;
+
+  const ref = app.view.examQueue[app.view.examPos];
+  if(!ref){ hardExitToStudy(); return; }
+
+  const d2 = app.data.decks.find(x => x.id === ref.deckId) || activeDeck;
+  const card = (d2?.cards || []).find(c => c.id === ref.cardId);
+  if(!card){ hardExitToStudy(); return; }
+
+  normalizeCard(card);
+
+  if(know) card.stats.know++;
+  else card.stats.dont++;
+
+  app.view.examLog.push({
+    deckId: ref.deckId,
+    cardId: ref.cardId,
+    verdict: know ? "know" : "dont",
+    userAnswer: (ui.userAnswer.value || "").trim(),
+    at: Date.now()
+  });
+
+  saveStore();
+
+  app.view.examPos++;
+
+  if(app.view.examPos >= app.view.examQueue.length){
+    if(app.view.examLog.length === 0){
+      hardExitToStudy();
+      return;
     }
+    app.view.examEndedEarly = false;
+    showSummary();
+    return;
+  }
 
-    function removeCurrentCard(){
-      const deck = getDeck();
-      if(!deck || deck.cards.length === 0) return;
-      if(!confirm("¿Borrar esta tarjeta?")) return;
-      deck.cards.splice(app.view.index, 1);
-      if(app.view.index >= deck.cards.length) app.view.index = 0;
-      exitExam(true);
-      saveStore();
-      render();
-      toast("🗑️ Tarjeta borrada");
-    }
+  app.view.examRevealed = false;
+  ui.userAnswer.value = "";
+  ui.aArea.style.display = "none";
+  ui.knowBtn.style.display = "none";
+  ui.dontKnowBtn.style.display = "none";
+  ui.revealCompareBtn.disabled = false;
 
-    function shuffleDeckStudy(){
-      const deck = getDeck();
-      if(!deck || deck.cards.length < 2) return;
-      deck.cards = deck.cards.map(normalizeCard);
-      const ids = makeShuffledIds(deck.cards);
-      const map = new Map(deck.cards.map(c => [c.id, c]));
-      deck.cards = ids.map(id => map.get(id)).filter(Boolean);
-      app.view.index = 0;
-      saveStore();
-      render();
-      toast("🔀 Mezclado");
-    }
+  render();
+}
 
-    /**************************************************************
-     * EXAM MODE
-     **************************************************************/
-    function enterExam(){
-      const deck = getDeck();
-      if(!deck){ toast("⚠️ No hay mazo"); return; }
-      if(deck.cards.length < MIN_EXAM_CARDS){
-        toast(`⚠️ Necesitas mínimo ${MIN_EXAM_CARDS} tarjetas para examen`);
-        return;
-      }
-      deck.cards = deck.cards.map(normalizeCard);
+/**************************************************************
+ * SUMMARY (OBLIGATORIO)
+ **************************************************************/
+function showSummary(){
+  const deck = getDeck();
+  if(!deck){ hardExitToStudy(); return; }
 
-      app.view.mode = "exam";
-      app.view.examQueue = makeShuffledIds(deck.cards);
-      app.view.examPos = 0;
-      app.view.examRevealed = false;
-      app.view.examLog = [];
-      app.view.examStartedAt = Date.now();
-      app.view.examEndedEarly = false;
+  const total = app.view.examLog.length;
+  const good = app.view.examLog.filter(x => x.verdict === "know").length;
+  const bad  = app.view.examLog.filter(x => x.verdict === "dont").length;
 
-      ui.userAnswer.value = "";
-      ui.aArea.style.display = "none";
-      ui.knowBtn.style.display = "none";
-      ui.dontKnowBtn.style.display = "none";
-      ui.revealCompareBtn.disabled = false;
+  const endedEarly = app.view.examEndedEarly;
+  ui.summarySubtitle.textContent =
+    endedEarly
+      ? `Saliste antes de tiempo. Respondidas: ${total}. (Resumen obligatorio)`
+      : `Examen completado. Respondidas: ${total}. (Resumen obligatorio)`;
 
-      render();
-      toast("🧪 Examen iniciado");
-    }
+  const startedAt = app.view.examStartedAt ? new Date(app.view.examStartedAt) : null;
+  ui.summaryStats.innerHTML = `
+    <span class="chip"><b>✅ Perfectas (La sé):</b> ${good}</span>
+    <span class="chip"><b>❌ Falladas (No la sé):</b> ${bad}</span>
+    <span class="chip"><b>📦 Mazo activo:</b> ${escapeHTML(deck.name)}</span>
+    <span class="chip"><b>🕒 Inicio:</b> ${startedAt ? startedAt.toLocaleString() : "—"}</span>
+  `;
 
-    function exitExam(forceNoSummary){
-      // si forceNoSummary true => salir sin resumen siempre (para cambios de mazo etc.)
-      if(app.view.mode !== "exam") return;
-      if(forceNoSummary){
-        hardExitToStudy();
-        return;
-      }
+  ui.resultList.innerHTML = "";
+  for(const entry of app.view.examLog){
+    const d2 = app.data.decks.find(x => x.id === entry.deckId) || deck;
+    const card = (d2?.cards || []).find(c => c.id === entry.cardId);
+    if(!card) continue;
 
-      // si está saliendo “a voluntad”:
-      // si NO contestó ninguna -> sale sin resumen
-      if(app.view.examLog.length === 0){
-        hardExitToStudy();
-        toast("Examen cancelado (sin respuestas)");
-        return;
-      }
+    normalizeCard(card);
 
-      // si respondió al menos una -> resumen obligatorio
-      app.view.examEndedEarly = true;
-      showSummary();
-    }
+    const item = document.createElement("div");
+    item.className = "resultItem";
 
-    function hardExitToStudy(){
-      app.view.mode = "study";
-      app.view.examQueue = [];
-      app.view.examPos = 0;
-      app.view.examRevealed = false;
-      app.view.examLog = [];
-      app.view.examStartedAt = null;
-      app.view.examEndedEarly = false;
-      ui.userAnswer.value = "";
-      render();
-    }
+    const badge = entry.verdict === "know"
+      ? `<span class="badgeGood">✅ La sé</span>`
+      : `<span class="badgeBad">❌ No la sé</span>`;
 
-    function examRevealCompare(){
-      if(app.view.mode !== "exam") return;
-      const deck = getDeck();
-      if(!deck || deck.cards.length === 0) return;
+    const qPreview = (card.q || "").slice(0, 600);
+    const aPreview = (card.a || "").slice(0, 900);
+    const ua = entry.userAnswer ? entry.userAnswer.slice(0, 900) : "";
 
-      app.view.examRevealed = true;
-      ui.aArea.style.display = "block";
-      ui.knowBtn.style.display = "inline-flex";
-      ui.dontKnowBtn.style.display = "inline-flex";
-      ui.revealCompareBtn.disabled = true;
+    item.innerHTML = `
+      ${badge}
+      <div class="smallMuted"><b>Mazo:</b> ${escapeHTML(d2?.name || "—")}</div>
+      <div class="qTitle">${escapeHTML(qPreview)}${(card.q||"").length > 600 ? "…" : ""}</div>
+      <div class="smallMuted"><b>Tu respuesta:</b>\n${ua ? escapeHTML(ua) : "(vacía)"}</div>
+      <div class="smallMuted"><b>Respuesta correcta:</b>\n${escapeHTML(aPreview)}${(card.a||"").length > 900 ? "…" : ""}</div>
+      <div class="smallMuted"><b>Historial total:</b> ✅ ${card.stats.know}   ❌ ${card.stats.dont}</div>
+    `;
 
-      toast("Marca: ✅ La sé / ❌ No la sé");
-    }
+    ui.resultList.appendChild(item);
+  }
 
-    function examMark(know){
-      if(app.view.mode !== "exam") return;
-      const deck = getDeck();
-      if(!deck || deck.cards.length === 0) return;
+  ui.summaryDialog.showModal();
+  ui.summaryWrap.scrollTop = 0;
 
-      const cid = app.view.examQueue[app.view.examPos];
-      const card = deck.cards.find(c => c.id === cid) || deck.cards[0];
-      normalizeCard(card);
+  // salir del modo examen internamente (resumen es puerta)
+  app.view.mode = "study";
+  app.view.examQueue = [];
+  app.view.examPos = 0;
+  app.view.examRevealed = false;
+  render();
+}
 
-      // guardar stats globales (historial invisible)
-      if(know) card.stats.know++;
-      else card.stats.dont++;
+ui.summaryDialog.addEventListener("cancel", (e) => e.preventDefault());
 
-      // guardar log de ESTE examen
-      app.view.examLog.push({
-        cardId: card.id,
-        verdict: know ? "know" : "dont",
-        userAnswer: (ui.userAnswer.value || "").trim(),
-        at: Date.now()
-      });
+function closeSummaryAndGoStudy(){
+  app.view.examLog = [];
+  app.view.examStartedAt = null;
+  app.view.examEndedEarly = false;
+  ui.summaryDialog.close();
+  toast("📚 Repaso");
+  render();
+}
 
-      saveStore();
+function closeSummaryAndStartNewExam(){
+  ui.summaryDialog.close();
+  app.view.examLog = [];
+  app.view.examStartedAt = null;
+  app.view.examEndedEarly = false;
+  openExamChoice();
+}
 
-      // avanzar en la cola
-      app.view.examPos++;
-
-      // fin de examen
-      if(app.view.examPos >= app.view.examQueue.length){
-        // si no contestó ninguna (no debería ocurrir aquí), sin resumen
-        if(app.view.examLog.length === 0){
-          hardExitToStudy();
-          return;
-        }
-        app.view.examEndedEarly = false;
-        showSummary();
-        return;
-      }
-
-      // preparar siguiente
-      app.view.examRevealed = false;
-      ui.userAnswer.value = "";
-      ui.aArea.style.display = "none";
-      ui.knowBtn.style.display = "none";
-      ui.dontKnowBtn.style.display = "none";
-      ui.revealCompareBtn.disabled = false;
-
-      render();
-    }
-
-    /**************************************************************
-     * SUMMARY (OBLIGATORIO)
-     **************************************************************/
-    function showSummary(){
-      const deck = getDeck();
-      if(!deck){ hardExitToStudy(); return; }
-      deck.cards = deck.cards.map(normalizeCard);
-
-      const total = app.view.examLog.length;
-      const good = app.view.examLog.filter(x => x.verdict === "know").length;
-      const bad  = app.view.examLog.filter(x => x.verdict === "dont").length;
-
-      const endedEarly = app.view.examEndedEarly;
-      ui.summarySubtitle.textContent =
-        endedEarly
-          ? `Saliste antes de tiempo. Respondidas: ${total}. (Resumen obligatorio)`
-          : `Examen completado. Respondidas: ${total}. (Resumen obligatorio)`;
-
-      // stats arriba
-      const startedAt = app.view.examStartedAt ? new Date(app.view.examStartedAt) : null;
-      ui.summaryStats.innerHTML = `
-        <span class="chip"><b>✅ Perfectas (La sé):</b> ${good}</span>
-        <span class="chip"><b>❌ Falladas (No la sé):</b> ${bad}</span>
-        <span class="chip"><b>📦 Mazo:</b> ${deck.name}</span>
-        <span class="chip"><b>🕒 Inicio:</b> ${startedAt ? startedAt.toLocaleString() : "—"}</span>
-      `;
-
-      // lista
-      ui.resultList.innerHTML = "";
-      for(const entry of app.view.examLog){
-        const card = deck.cards.find(c => c.id === entry.cardId);
-        if(!card) continue;
-
-        const item = document.createElement("div");
-        item.className = "resultItem";
-
-        const badge = entry.verdict === "know"
-          ? `<span class="badgeGood">✅ La sé</span>`
-          : `<span class="badgeBad">❌ No la sé</span>`;
-
-        const qPreview = (card.q || "").slice(0, 600);
-        const aPreview = (card.a || "").slice(0, 900);
-
-        const ua = entry.userAnswer ? entry.userAnswer.slice(0, 900) : "";
-
-        item.innerHTML = `
-          ${badge}
-          <div class="qTitle">${escapeHTML(qPreview)}${(card.q||"").length > 600 ? "…" : ""}</div>
-          <div class="smallMuted"><b>Tu respuesta:</b>\n${ua ? escapeHTML(ua) : "(vacía)"} </div>
-          <div class="smallMuted"><b>Respuesta correcta:</b>\n${escapeHTML(aPreview)}${(card.a||"").length > 900 ? "…" : ""}</div>
-          <div class="smallMuted"><b>Historial total:</b> ✅ ${card.stats.know}   ❌ ${card.stats.dont}</div>
-        `;
-
-        ui.resultList.appendChild(item);
-      }
-
-      // abrir resumen y obligar scroll arriba
-      ui.summaryDialog.showModal();
-      ui.summaryWrap.scrollTop = 0;
-
-      // Salir del modo examen internamente, pero NO vuelvas a la UI hasta que el resumen lo decida
-      // (así el resumen queda como “puerta obligatoria”).
-      app.view.mode = "study";
-      app.view.examQueue = [];
-      app.view.examPos = 0;
-      app.view.examRevealed = false;
-      // mantenemos examLog para el resumen hasta que el usuario elija
-      render();
-    }
-
-    // Evitar cierre del resumen con ESC (obligatorio)
-    ui.summaryDialog.addEventListener("cancel", (e) => e.preventDefault());
-
-    function closeSummaryAndGoStudy(){
-      // limpiar log cuando ya “cumplió” el resumen
-      app.view.examLog = [];
-      app.view.examStartedAt = null;
-      app.view.examEndedEarly = false;
-      ui.summaryDialog.close();
-      toast("📚 Repaso");
-      render();
-    }
-
-    function closeSummaryAndStartNewExam(){
-      ui.summaryDialog.close();
-      // limpiar log y arrancar nuevo examen
-      app.view.examLog = [];
-      app.view.examStartedAt = null;
-      app.view.examEndedEarly = false;
-      enterExam();
-    }
-
-    function escapeHTML(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-  /**************************************************************
+/**************************************************************
  * NOVEDADES (Changelog / News)
  **************************************************************/
 const NEWS_STATE_KEY = "es_estudio_news_state_v1";
@@ -1303,11 +1447,8 @@ async function maybeShowNewsPopupOnce(){
   const newest = items[0];
 
   const state = loadNewsState();
-
-  // ✅ Solo una vez por novedad nueva
   if(state.popupShownForId === newest.id) return;
 
-  // ✅ marca como mostrado INMEDIATAMENTE (así no se repite al reabrir)
   state.popupShownForId = newest.id;
   saveNewsState(state);
 
@@ -1362,218 +1503,256 @@ async function renderNewsPanel(){
     ui.newsList.appendChild(box);
   }
 }
-    /**************************************************************
-     * EXPORT / IMPORT
-     **************************************************************/
-    function downloadJSON(obj, filename){
-      const blob = new Blob([JSON.stringify(obj, null, 2)], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+
+/**************************************************************
+ * EXPORT / IMPORT
+ **************************************************************/
+function downloadJSON(obj, filename){
+  const blob = new Blob([JSON.stringify(obj, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function exportCurrentDeck(){
+  const d = getDeck();
+  if(!d){ toast("⚠️ No hay mazo"); return; }
+  const safeName = d.name.replace(/[^\w\-]+/g, "_").slice(0,40) || "mazo";
+  downloadJSON({ deck: d }, `mazo_${safeName}.json`);
+  toast("⬇️ Exportado mazo");
+}
+
+function importIntoCurrentDeck(file){
+  const d = getDeck();
+  if(!d){ toast("⚠️ No hay mazo"); return; }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const parsed = JSON.parse(reader.result);
+      const incoming = parsed.deck?.cards;
+      if(!Array.isArray(incoming)) throw new Error("Formato inválido");
+
+      const cleaned = incoming
+        .filter(x => x && typeof x === "object")
+        .map(x => normalizeCard({
+          id: uid(),
+          q: String(x.q ?? x.question ?? ""),
+          a: String(x.a ?? x.answer ?? ""),
+          stats: x.stats ? { know: Number(x.stats.know||0), dont: Number(x.stats.dont||0) } : { know:0, dont:0 }
+        }))
+        .filter(x => x.q.trim() && x.a.trim());
+
+      if(!cleaned.length){ alert("No hay tarjetas válidas en ese JSON."); return; }
+
+      const replace = confirm("¿Reemplazar este mazo?\nAceptar = reemplazar • Cancelar = combinar");
+      d.cards = replace ? cleaned : d.cards.concat(cleaned);
+
+      app.view.index = 0;
+      exitExam(true);
+      saveStore();
+      render();
+      toast("⬆️ Importado en mazo");
+    }catch(e){
+      alert("No se pudo importar.\nAsegúrate de que sea un JSON de mazo válido.");
     }
+  };
+  reader.readAsText(file);
+}
 
-    function exportCurrentDeck(){
-      const d = getDeck();
-      if(!d){ toast("⚠️ No hay mazo"); return; }
-      const safeName = d.name.replace(/[^\w\-]+/g, "_").slice(0,40) || "mazo";
-      downloadJSON({ deck: d }, `mazo_${safeName}.json`);
-      toast("⬇️ Exportado mazo");
-    }
+function exportAll(){
+  downloadJSON(app.data, `flashcards_todos_los_mazos.json`);
+  toast("⬇️ Exportado todo");
+}
 
-    function importIntoCurrentDeck(file){
-      const d = getDeck();
-      if(!d){ toast("⚠️ No hay mazo"); return; }
+function importAll(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const parsed = JSON.parse(reader.result);
+      if(!parsed || typeof parsed !== "object" || !Array.isArray(parsed.decks)) throw new Error("Formato inválido");
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        try{
-          const parsed = JSON.parse(reader.result);
-          const incoming = parsed.deck?.cards;
-          if(!Array.isArray(incoming)) throw new Error("Formato inválido");
-
-          const cleaned = incoming
-            .filter(x => x && typeof x === "object")
-            .map(x => normalizeCard({
-              id: uid(),
-              q: String(x.q ?? x.question ?? ""),
-              a: String(x.a ?? x.answer ?? ""),
-              stats: x.stats ? { know: Number(x.stats.know||0), dont: Number(x.stats.dont||0) } : { know:0, dont:0 }
-            }))
-            .filter(x => x.q.trim() && x.a.trim());
-
-          if(!cleaned.length){ alert("No hay tarjetas válidas en ese JSON."); return; }
-
-          const replace = confirm("¿Reemplazar este mazo?\nAceptar = reemplazar • Cancelar = combinar");
-          d.cards = replace ? cleaned : d.cards.concat(cleaned);
-
-          app.view.index = 0;
-          exitExam(true);
-          saveStore();
-          render();
-          toast("⬆️ Importado en mazo");
-        }catch(e){
-          alert("No se pudo importar.\nAsegúrate de que sea un JSON de mazo válido.");
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function exportAll(){
-      downloadJSON(app.data, `flashcards_todos_los_mazos.json`);
-      toast("⬇️ Exportado todo");
-    }
-
-    function importAll(file){
-      const reader = new FileReader();
-      reader.onload = () => {
-        try{
-          const parsed = JSON.parse(reader.result);
-          if(!parsed || typeof parsed !== "object" || !Array.isArray(parsed.decks)) throw new Error("Formato inválido");
-
-          const decks = parsed.decks
-            .filter(d => d && typeof d === "object")
-            .map(d => ({
-              id: uid(),
-              name: String(d.name ?? "Mazo"),
-              cards: Array.isArray(d.cards) ? d.cards.map(c => normalizeCard({
+      const decks = parsed.decks
+        .filter(d => d && typeof d === "object")
+        .map(d => ({
+          id: uid(),
+          name: String(d.name ?? "Mazo"),
+          cards: Array.isArray(d.cards)
+            ? d.cards.map(c => normalizeCard({
                 id: uid(),
                 q: String(c.q ?? c.question ?? ""),
                 a: String(c.a ?? c.answer ?? ""),
                 stats: c.stats ? { know: Number(c.stats.know||0), dont: Number(c.stats.dont||0) } : { know:0, dont:0 }
-              })).filter(c => c.q.trim() && c.a.trim()) : []
-            }));
+              })).filter(c => c.q.trim() && c.a.trim())
+            : []
+        }));
 
-          if(!decks.length){ alert("No hay mazos válidos en ese archivo."); return; }
+      if(!decks.length){ alert("No hay mazos válidos en ese archivo."); return; }
 
-          const replace = confirm("¿Reemplazar TODO lo actual?\nAceptar = reemplazar • Cancelar = combinar");
-          app.data.decks = replace ? decks : app.data.decks.concat(decks);
-          app.data.activeDeckId = app.data.decks[0].id;
-          app.view.index = 0;
-          exitExam(true);
-
-          saveStore();
-          render();
-          toast("⬆️ Importado todo");
-        }catch(e){
-          alert("No se pudo importar.\nEl archivo debe ser un JSON válido exportado por esta app.");
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function wipeEverything(){
-      if(!confirm("Esto borra TODOS los mazos y tarjetas de ESTE navegador.\n¿Seguro?")) return;
-      localStorage.removeItem(STORE_KEY);
-      app.data = { activeDeckId: null, decks: [] };
+      const replace = confirm("¿Reemplazar TODO lo actual?\nAceptar = reemplazar • Cancelar = combinar");
+      app.data.decks = replace ? decks : app.data.decks.concat(decks);
+      app.data.activeDeckId = app.data.decks[0]?.id || null;
       app.view.index = 0;
       exitExam(true);
-      ui.studyView.style.display = "none";
-      ui.topBar.style.display = "none";
-      ui.welcomeView.style.display = "block";
-      toast("🧨 Todo borrado");
+
+      saveStore();
+      render();
+      toast("⬆️ Importado todo");
+    }catch(e){
+      alert("No se pudo importar.\nEl archivo debe ser un JSON válido exportado por esta app.");
     }
+  };
+  reader.readAsText(file);
+}
 
-    /**************************************************************
-     * EVENTS
-     **************************************************************/
-    ui.enterBtn.addEventListener("click", () => { ensureDeck(); showApp(); });
-    ui.quickDeckBtn.addEventListener("click", () => { ensureDeck(); showApp(); openDecks(); });
+function wipeEverything(){
+  if(!confirm("Esto borra TODOS los mazos y tarjetas de ESTE navegador.\n¿Seguro?")) return;
+  localStorage.removeItem(STORE_KEY);
+  app.data = { activeDeckId: null, decks: [] };
+  app.view.index = 0;
+  exitExam(true);
+  ui.studyView.style.display = "none";
+  ui.topBar.style.display = "none";
+  ui.welcomeView.style.display = "block";
+  toast("🧨 Todo borrado");
+}
 
-    ui.decksBtn.addEventListener("click", openDecks);
-    ui.createDeckBtn.addEventListener("click", () => { createDeck(ui.newDeckName.value); ui.newDeckName.value = ""; });
-    ui.closeDeckDlg.addEventListener("click", () => ui.deckDialog.close());
+/**************************************************************
+ * EXAM CHOICE
+ **************************************************************/
+function openExamChoice(){
+  ui.examChoiceDialog.showModal();
+}
 
-    ui.prevBtn.addEventListener("click", () => {
-      if(app.view.mode !== "study") return;
-      const d = getDeck(); if(!d || d.cards.length === 0) return;
-      app.view.index--; render();
-    });
+/**************************************************************
+ * EVENTS
+ **************************************************************/
+ui.enterBtn.addEventListener("click", () => { ensureDeck(); showApp(); });
+ui.quickDeckBtn.addEventListener("click", () => { ensureDeck(); showApp(); openDecks(); });
 
-    ui.nextBtn.addEventListener("click", () => {
-      const d = getDeck(); if(!d || d.cards.length === 0) return;
-      if(app.view.mode === "exam"){
-        toast("En examen debes marcar ✅/❌ para continuar");
-        return;
-      }
-      app.view.index++; render();
-    });
+ui.decksBtn.addEventListener("click", openDecks);
+ui.createDeckBtn.addEventListener("click", () => { createDeck(ui.newDeckName.value); ui.newDeckName.value = ""; });
+ui.closeDeckDlg.addEventListener("click", () => ui.deckDialog.close());
 
-    ui.mixBtn.addEventListener("click", () => {
-      if(app.view.mode !== "study") return;
-      
-const d = getDeck();
+ui.prevBtn.addEventListener("click", () => {
+  if(app.view.mode !== "study") return;
+  const d = getDeck(); if(!d || d.cards.length === 0) return;
+  app.view.index--; render();
+});
+
+ui.nextBtn.addEventListener("click", () => {
+  const d = getDeck(); if(!d || d.cards.length === 0) return;
+  if(app.view.mode === "exam"){
+    toast("En examen debes marcar ✅/❌ para continuar");
+    return;
+  }
+  app.view.index++; render();
+});
+
+ui.mixBtn.addEventListener("click", () => {
+  if(app.view.mode !== "study") return;
+  const d = getDeck();
   if(!d || d.cards.length < 2){
     toast("⚠️ Necesitas al menos 2 tarjetas para mezclar");
     return;
   }
-
   const ok = confirm("¿Estás seguro/a de que quieres mezclar el mazo?");
   if(!ok){
     toast("↩️ Mezcla cancelada");
     return;
   }
+  shuffleDeckStudy();
+});
 
-      shuffleDeckStudy();
-    });
+ui.revealBtn.addEventListener("click", () => {
+  if(app.view.mode !== "study") return;
+  const d = getDeck();
+  if(!d || d.cards.length === 0) return;
+  setAnswerVisible(!app.view.answerVisible);
+});
 
-    ui.revealBtn.addEventListener("click", () => {
-      if(app.view.mode !== "study") return;
-      const d = getDeck();
-      if(!d || d.cards.length === 0) return;
-      setAnswerVisible(!app.view.answerVisible);
-    });
+ui.newCardBtn.addEventListener("click", () => openCardDialog("new"));
+ui.editCardBtn.addEventListener("click", () => {
+  if(app.view.mode !== "study") { toast("Sal del examen para editar"); return; }
+  openCardDialog("edit");
+});
 
-    ui.newCardBtn.addEventListener("click", () => openCardDialog("new"));
-    ui.editCardBtn.addEventListener("click", () => {
-      if(app.view.mode !== "study") { toast("Sal del examen para editar"); return; }
-      openCardDialog("edit");
-    });
+ui.removeCardBtn.addEventListener("click", () => {
+  if(app.view.mode !== "study") { toast("Sal del examen para borrar"); return; }
+  removeCurrentCard();
+});
 
-    ui.removeCardBtn.addEventListener("click", () => {
-      if(app.view.mode !== "study") { toast("Sal del examen para borrar"); return; }
-      removeCurrentCard();
-    });
+ui.closeCardDlg.addEventListener("click", () => ui.cardDialog.close());
+ui.cancelCardDlg.addEventListener("click", () => ui.cardDialog.close());
+ui.saveCardDlg.addEventListener("click", saveCardFromDialog);
 
-    ui.closeCardDlg.addEventListener("click", () => ui.cardDialog.close());
-    ui.cancelCardDlg.addEventListener("click", () => ui.cardDialog.close());
-    ui.saveCardDlg.addEventListener("click", saveCardFromDialog);
+ui.exportDeckBtn.addEventListener("click", exportCurrentDeck);
+ui.importDeckInput.addEventListener("change", (e) => {
+  const f = e.target.files?.[0];
+  if(f) importIntoCurrentDeck(f);
+  e.target.value = "";
+});
 
-    ui.exportDeckBtn.addEventListener("click", exportCurrentDeck);
-    ui.importDeckInput.addEventListener("change", (e) => {
-      const f = e.target.files?.[0];
-      if(f) importIntoCurrentDeck(f);
-      e.target.value = "";
-    });
+ui.exportAllBtn.addEventListener("click", exportAll);
+ui.importAllInput.addEventListener("change", (e) => {
+  const f = e.target.files?.[0];
+  if(f) importAll(f);
+  e.target.value = "";
+});
 
-    ui.exportAllBtn.addEventListener("click", exportAll);
-    ui.importAllInput.addEventListener("change", (e) => {
-      const f = e.target.files?.[0];
-      if(f) importAll(f);
-      e.target.value = "";
-    });
+ui.wipeBtn.addEventListener("click", wipeEverything);
 
-    ui.wipeBtn.addEventListener("click", wipeEverything);
+// ✅ Examen: ahora pregunta tipo
+ui.examToggleBtn.addEventListener("click", () => {
+  if(app.view.mode === "exam"){
+    exitExam(false);
+    return;
+  }
+  openExamChoice();
+});
 
-    // Exam toggle (entra o sale)
-    ui.examToggleBtn.addEventListener("click", () => {
-      if(app.view.mode === "exam") exitExam(false);
-      else enterExam();
-    });
+ui.exitExamBtn.addEventListener("click", () => exitExam(false));
+ui.revealCompareBtn.addEventListener("click", examRevealCompare);
+ui.knowBtn.addEventListener("click", () => examMark(true));
+ui.dontKnowBtn.addEventListener("click", () => examMark(false));
 
-    ui.exitExamBtn.addEventListener("click", () => exitExam(false));
+// Summary buttons
+ui.resumeStudyBtn.addEventListener("click", closeSummaryAndGoStudy);
+ui.anotherExamBtn.addEventListener("click", closeSummaryAndStartNewExam);
 
-    ui.revealCompareBtn.addEventListener("click", examRevealCompare);
-    ui.knowBtn.addEventListener("click", () => examMark(true));
-    ui.dontKnowBtn.addEventListener("click", () => examMark(false));
+// Exam choice dialog
+ui.closeExamChoiceDlg.addEventListener("click", () => ui.examChoiceDialog.close());
+ui.examChoiceCancelBtn.addEventListener("click", () => ui.examChoiceDialog.close());
 
-    // Summary buttons (al final del scroll)
-    ui.resumeStudyBtn.addEventListener("click", closeSummaryAndGoStudy);
-    ui.anotherExamBtn.addEventListener("click", closeSummaryAndStartNewExam);
+ui.examSingleBtn.addEventListener("click", () => {
+  ui.examChoiceDialog.close();
+  enterExam();
+});
+
+ui.examMultiBtn.addEventListener("click", () => {
+  ui.examChoiceDialog.close();
+  openMergeExamDialog();
+});
+
+// Multi exam selector dialog
+ui.closeMergeExamDlg.addEventListener("click", () => ui.mergeExamDialog.close());
+ui.cancelMergeExamBtn.addEventListener("click", () => ui.mergeExamDialog.close());
+
+ui.startMergeExamBtn.addEventListener("click", () => {
+  const ids = getSelectedMergeDeckIds();
+  if(ids.length < 2){
+    toast("⚠️ Selecciona al menos 2 mazos");
+    return;
+  }
+  const ok = startMultiDeckExam(ids);
+  if(ok) ui.mergeExamDialog.close();
+});
+
 /**************************************************************
  * NOVEDADES: EVENTS
  **************************************************************/
@@ -1583,7 +1762,6 @@ ui.newsBtn?.addEventListener("click", async () => {
   ui.newsDialog.showModal();
   ui.newsWrap.scrollTop = 0;
 });
-
 ui.closeNewsDlg?.addEventListener("click", () => ui.newsDialog.close());
 
 ui.newsPopupViewBtn?.addEventListener("click", async () => {
@@ -1593,7 +1771,6 @@ ui.newsPopupViewBtn?.addEventListener("click", async () => {
   ui.newsDialog.showModal();
   ui.newsWrap.scrollTop = 0;
 });
-
 ui.newsPopupCloseBtn?.addEventListener("click", hideNewsPopup);
 
 ui.markAllSeenBtn?.addEventListener("click", async () => {
@@ -1604,40 +1781,37 @@ ui.markAllSeenBtn?.addEventListener("click", async () => {
   toast("✅ Marcadas como visto");
   renderNewsPanel();
 });
-
 ui.applyUpdateBtn?.addEventListener("click", applyPendingUpdate);
-    // INIT
-    loadStore();
 
-    /**************************************************************
-     * PWA: service worker register
-     **************************************************************/
-    if ("serviceWorker" in navigator) {
+/**************************************************************
+ * INIT
+ **************************************************************/
+loadStore();
+
+/**************************************************************
+ * PWA: service worker register
+ **************************************************************/
+if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
       const reg = await navigator.serviceWorker.register("./sw.js");
-window._swReg = reg;
-      // Chequea actualizaciones al abrir (útil en GH Pages)
-      // registration.update() intenta bajar SW nuevo. [7](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/update)
+      window._swReg = reg;
+
       reg.update().catch(() => {});
 
-      // Si ya había una actualización esperando
       if (reg.waiting) showUpdatePrompt(reg);
 
-      // Cuando se detecta un SW nuevo instalándose
       reg.addEventListener("updatefound", () => {
         const newWorker = reg.installing;
         if (!newWorker) return;
 
         newWorker.addEventListener("statechange", () => {
-          // installed + ya existe controller => update listo
           if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
             showUpdatePrompt(reg);
           }
         });
       });
 
-      // Cuando el SW nuevo toma control -> recarga para usar la nueva versión
       let reloading = false;
       navigator.serviceWorker.addEventListener("controllerchange", () => {
         if (reloading) return;
@@ -1646,20 +1820,16 @@ window._swReg = reg;
       });
 
     } catch {
-      // Si falla, la app sigue funcionando sin SW
+      // si falla, la app sigue sin SW
     }
   });
 }
 
 function showUpdatePrompt(reg) {
   toast("✨ Nueva versión disponible");
-
-  // Si quieres algo más bonito, luego lo cambiamos por un modal propio.
   setTimeout(() => {
     const ok = confirm("Hay una actualización disponible.\nTus mazos NO se borran.\n¿Actualizar ahora?");
     if (!ok) return;
-
-    // Dile al SW waiting que se active ya. [4](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting)[1](https://web.dev/articles/service-worker-lifecycle)
     if (reg.waiting) {
       reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }
@@ -1668,7 +1838,3 @@ function showUpdatePrompt(reg) {
   </script>
 </body>
 </html>
-
-
-
-
