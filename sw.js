@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_VERSION = "v6"; // <-- cambia a v3, v4, etc. por release
+const CACHE_VERSION = "v2"; // <-- cambia a v3, v4, etc. por release
 const CACHE_NAME = `flashcards-${CACHE_VERSION}`;
 
 const CORE_ASSETS = [
@@ -9,10 +9,9 @@ const CORE_ASSETS = [
   "./sw.js"
 ];
 
-// Install: precache básico + activar rápido
+// Install: precache básico (la activación se controla desde la app)
 self.addEventListener("install", (event) => {
-  
-event.waitUntil((async () => {
+  event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
 
     await Promise.all(
@@ -20,12 +19,11 @@ event.waitUntil((async () => {
         const req = new Request(url, { cache: "reload" });
         const res = await fetch(req);
         await cache.put(url, res);
-
       })
     );
 
-    // Pasa de waiting a active lo antes posible (cuando toque)
-    await self.skipWaiting();
+    // NOTA: no forzamos skipWaiting aquí. Dejamos que la app controle la activación
+    // mediante el mensaje SKIP_WAITING cuando el usuario decide actualizar.
   })());
 });
 
@@ -93,9 +91,5 @@ async function cacheFirst(req) {
   cache.put(req, fresh.clone());
   return fresh;
 }
-
-
-
-
 
 
