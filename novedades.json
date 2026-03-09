@@ -1,35 +1,40 @@
 {
   "items": [
     {
-      "id": "0",
+      "id": "2026-03-05-news-panel",
       "title": "Panel de Novedades",
-      "body": "Ahora puedes ver cambios y avisos dentro de la app.",
+      "body": "Ahora puedes ver cambios y avisos dentro de la app desde el panel de Novedades.\n\nTip: si ves algo marcado como “Nuevo”, significa que todavía no lo habías visto.",
       "createdAt": "5 de marzo de 2026"
     },
     {
-      "id": "0",
-      "title": "Actualizacion",
-      "body": "Actualizar la app es mas facil y proximamente tambien te preguntara en actualizar para que el usuario tenga mas control",
+      "id": "2026-03-05-updates-setup",
+      "title": "Actualizaciones (mejoras iniciales)",
+      "body": "Se mejoró el sistema de actualización para que sea más fácil mantener la app al día.\n\nPróximamente: la app te preguntará antes de actualizar para que el usuario tenga más control.",
       "createdAt": "5 de marzo de 2026"
     },
     {
-      "id": "1",
-      "title": "Nueva actualizacion",
-      "body": "Le hemos cambiado el color a las franjas de cada Guide, hemos cambiado textos viejos, colores, cambio al modo examen, nuevo minimo de cartas 5 de 10 para iniciar examen y masss",
+      "id": "2026-03-08-ui-exam-tuning",
+      "title": "Ajustes visuales y modo examen",
+      "body": "Se hicieron varios ajustes visuales y de texto:\n• Colores y estilos en guías\n• Textos viejos actualizados\n• Cambios al modo examen\n\nTambién se ajustaron mínimos del examen (seguimos afinándolo).",
       "createdAt": "8 de marzo de 2026"
     },
     {
-      "id": "2",
-      "title": "Examen Multi mazos",
-      "body": "Hemos anadido que puedas hacer examenes con varios mazos que tengas. Para poder beneficiar mas tecnicas de estudios.",
+      "id": "2026-03-08-multi-deck-exam",
+      "title": "Examen con varios mazos",
+      "body": "Ahora puedes hacer exámenes usando tarjetas de varios mazos.\n\nEsto ayuda a mezclar temas y entrenar mejor técnicas de estudio.",
       "createdAt": "8 de marzo de 2026"
     },
     {
-      "id": "2",
-      "title": "Modo examen",
-      "body": "Sutil cambio a examen con 3 cartas minimo",
+      "id": "2026-03-08-pro-editor-launch",
+      "title": "GRAN UPDATE: nació la Edición Pro 🧰",
+      "body": "Ok, esto está durísimo: ya existe el modo 🧰 Edición Pro.\n\nLa idea es manejar tus flashcards como una app seria:\n• Ver tarjetas en grid\n• Duplicar y borrar tarjetas\n• Preparar el terreno para moverlas (drag & drop) sin drama",
+      "createdAt": "8 de marzo de 2026"
+    },
+    {
+      "id": "2026-03-08-pro-fixes-and-updates-control",
+      "title": "Fixes + control de actualización",
+      "body": "✅ Fix importante (Edición Pro):\nSe arregló el bug donde en All (Q+R) los botones (duplicar/borrar) se montaban encima del texto.\n\n🔄 Control de actualizaciones:\nSe trabajó para que el usuario pueda elegir cuándo actualizar (más control y menos invasivo).\n\n🚧 Pendiente:\nEl drag todavía está sensitivo cuando hay mucho texto. Queremos que puedas scrollear sin que la tarjeta se “agarre” sin querer (mejora en progreso).",
       "createdAt": "8 de marzo de 2026"
     }
-
-    ]
+  ]
 }
