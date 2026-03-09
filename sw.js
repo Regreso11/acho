@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_VERSION = "v2"; // <-- cambia a v3, v4, etc. por release
+const CACHE_VERSION = "v3"; // <-- cambia a v3, v4, etc. por release
 const CACHE_NAME = `flashcards-${CACHE_VERSION}`;
 
 const CORE_ASSETS = [
