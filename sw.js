@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_VERSION = "v11"; // <-- cambia a v3, v4, etc. por release
+const CACHE_VERSION = "v12"; // <-- cambia a v3, v4, etc. por release
 const CACHE_NAME = `flashcards-${CACHE_VERSION}`;
 
 const CORE_ASSETS = [
@@ -91,6 +91,7 @@ async function cacheFirst(req) {
   cache.put(req, fresh.clone());
   return fresh;
 }
+
 
 
 
