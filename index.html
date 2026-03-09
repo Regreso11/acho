@@ -36,6 +36,7 @@
 
     body{
       margin:0;
+      min-height:100vh;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
       background:
@@ -44,14 +45,19 @@
         radial-gradient(1100px 700px at 50% 115%, rgba(59,130,246,.18), transparent 55%),
         var(--bg);
       display:flex;
+      flex-direction:column;
       align-items:center;
-      justify-content:center;
-      padding:18px;
+      justify-content:flex-start;
+      padding: env(safe-area-inset-top, 18px) env(safe-area-inset-right, 18px) env(safe-area-inset-bottom, 18px) env(safe-area-inset-left, 18px);
+      overflow: hidden;
     }
 
-    .shell{ width:min(1100px, 100%); display:grid; gap:14px; }
+    .shell{ width:min(1100px, 100%); max-width:1100px; display:flex; flex-direction:column; gap:14px; flex:1; min-height:0; overflow:hidden; }
 
     .bar{
+      position: sticky;
+      top: env(safe-area-inset-top, 0);
+      z-index: 20;
       background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
       border:1px solid var(--stroke);
       border-radius: var(--r);
@@ -67,13 +73,54 @@
     .brand .h{ font-size:14px; letter-spacing:.02em; font-weight:900; }
     .brand .s{ font-size:12px; color:var(--muted); }
 
-    .actions{ display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:flex-end;
+      overflow-x:auto;
+      padding-bottom:4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .actions::-webkit-scrollbar{ display:none; }
+
+    .hideOnMobile{ display: inline-flex; }
+
+    .moreBtn{ min-width: 40px; justify-content: center; }
+
+    .moreMenu{
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 14px;
+      background: rgba(0,0,0,.85);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 50;
+      min-width: 220px;
+      max-height: 60vh;
+      overflow: auto;
+    }
+    .moreMenu.on{ display: flex; }
+    .moreMenu .btn{ width: 100%; justify-content: flex-start; }
+
+    @media (max-width: 720px){
+      .hideOnMobile{ display:none !important; }
+      .actions{ flex-wrap: nowrap; }
+    }
+
     .btn{
       border:1px solid var(--stroke);
       background: rgba(255,255,255,.08);
       color:var(--text);
       border-radius: 14px;
       padding:10px 12px;
+      min-height: 44px;
+      min-width: 44px;
       font-weight:900;
       font-size:13px;
       cursor:pointer;
@@ -111,8 +158,7 @@
     }
     .row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 
-    .study{ display:none; gap:14px; }
-    .pro{ display:none; gap:14px; }
+    .study, .pro{ display:none; gap:14px; flex:1; min-height:0; overflow:auto; }
 
     .meta{
       display:flex;
@@ -660,16 +706,26 @@
         <button class="btn flat" id="decksBtn" title="Paquetes / Mazos">📦 Mazos</button>
         <button class="btn primary" id="examToggleBtn" title="Modo examen">🧪 Examen</button>
         <button class="btn" id="proBtn" title="Edición Pro">🧰 Edición Pro</button>
-        <button class="btn" id="newsBtn" title="Novedades">📰 Novedades</button>
-        <button class="btn" id="exportAllBtn" title="Exportar todo">⬇️ Exportar todo</button>
 
-        <span class="btn" title="Importar todo" style="position:relative; overflow:hidden;">
+        <button class="btn hideOnMobile" id="newsBtn" title="Novedades">📰 Novedades</button>
+        <button class="btn hideOnMobile" id="exportAllBtn" title="Exportar todo">⬇️ Exportar todo</button>
+
+        <span class="btn hideOnMobile" title="Importar todo" style="position:relative; overflow:hidden;">
           ⬆️ Importar todo
           <input type="file" id="importAllInput"
                  style="position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;">
         </span>
 
-        <button class="btn danger flat" id="wipeBtn" title="Borrar TODO del navegador">🧨 Borrar todo</button>
+        <button class="btn danger flat hideOnMobile" id="wipeBtn" title="Borrar TODO del navegador">🧨 Borrar todo</button>
+
+        <button class="btn flat moreBtn" id="moreBtn" title="Más">⋯</button>
+      </div>
+
+      <div class="moreMenu" id="moreMenu" aria-hidden="true">
+        <button class="btn" id="moreNewsBtn">📰 Novedades</button>
+        <button class="btn" id="moreExportAllBtn">⬇️ Exportar todo</button>
+        <button class="btn" id="moreImportAllBtn">⬆️ Importar todo</button>
+        <button class="btn danger" id="moreWipeBtn">🧨 Borrar todo</button>
       </div>
     </div>
 
@@ -1095,6 +1151,12 @@ const ui = {
   exportAllBtn: document.getElementById("exportAllBtn"),
   importAllInput: document.getElementById("importAllInput"),
   wipeBtn: document.getElementById("wipeBtn"),
+  moreBtn: document.getElementById("moreBtn"),
+  moreMenu: document.getElementById("moreMenu"),
+  moreNewsBtn: document.getElementById("moreNewsBtn"),
+  moreExportAllBtn: document.getElementById("moreExportAllBtn"),
+  moreImportAllBtn: document.getElementById("moreImportAllBtn"),
+  moreWipeBtn: document.getElementById("moreWipeBtn"),
 
   // Exam
   examArea: document.getElementById("examArea"),
@@ -1371,6 +1433,7 @@ function showWelcome(){
   ui.welcomeView.style.display = "block";
   ui.studyView.style.display = "none";
   ui.proView.style.display = "none";
+  if(typeof hideMoreMenu === "function") hideMoreMenu();
 }
 
 function showStudy(){
@@ -1379,6 +1442,7 @@ function showStudy(){
   ui.welcomeView.style.display = "none";
   ui.studyView.style.display = "grid";
   ui.proView.style.display = "none";
+  if(typeof hideMoreMenu === "function") hideMoreMenu();
   render();
 }
 
@@ -1388,6 +1452,7 @@ function showPro(){
   ui.welcomeView.style.display = "none";
   ui.studyView.style.display = "none";
   ui.proView.style.display = "grid";
+  if(typeof hideMoreMenu === "function") hideMoreMenu();
   render();
 }
 
@@ -1397,6 +1462,7 @@ function showExam(){
   ui.welcomeView.style.display = "none";
   ui.studyView.style.display = "grid";
   ui.proView.style.display = "none";
+  if(typeof hideMoreMenu === "function") hideMoreMenu();
   render();
 }
 
@@ -2474,6 +2540,49 @@ function proDevMsg(){
    NOTA:
    - PARTE 3/3 añadirá: DnD completo + FLIP real + updates (SW) + eventos + INIT + cierre </body></html>
    ========================= */
+
+/* ============================================================
+   UX / Responsive (ideas pro)
+
+   Sí — definitivamente vale la pena mejorar cómo se ve y se siente
+   en móvil, tablets y PC. En tu tipo de app (flashcards + edición pro),
+   los cambios que más “se sienten pro” no son solo estéticos: son
+   layout responsivo + jerarquía de acciones + ergonomía táctil.
+
+   1) El problema raíz: “densidad” y “alcanzabilidad”
+      - Mucha densidad de controles (topbar + acciones)
+      - En pantallas pequeñas el usuario puede perder partes de la UI
+        porque el scroll se atrapa o la barra ocupa demasiado.
+
+   2) Recomendaciones globales (aplican a TODO):
+      A) Jerarquía clara de acciones (Primary vs Secondary).
+      B) Barra superior adaptativa (scroll horizontal o botón “⋯ Más”).
+      C) Un solo “scroll principal” (evitar scroll anidado excesivo).
+      D) Tamaños táctiles correctos (≥44px, espacios entre botones).
+      E) Tipografía y espaciado escalables (clamp, jerarquía visual).
+      F) Estados visibles ("Seleccionadas: 7", botones habilitados/deshabilitados).
+      G) Diálogos mobile friendly (alto máximo y scroll interno).
+      H) Modo oscuro consistente (contraste, sombras, colores de acento).
+
+   3) Mejoras específicas por dispositivo:
+      📱 Móvil: toolbar compacta + “Más”, botones accesibles, safe-area insets,
+      evitar scroll atrapado, simplificar vista Pro.
+      📟 Tablet: layout de dos columnas opcional, grid dinámico, diálogos grandes.
+      🖥️ PC: atajos de teclado, hover/tooltips, selección con shift/ctrl.
+
+   4) Mejoras visuales (look & feel pro):
+      - Iconografía consistente (emojis vs set fijo).
+      - Espaciados y alineaciones consistentes.
+      - Densidad configurable (compacto vs cómodo).
+
+   5) Plan corto (impacto rápido):
+      1) Topbar móvil con ••• Más / menu.
+      2) Un solo scroll principal.
+      3) Barra sticky de acciones de selección en Pro.
+      4) Ajuste de tamaños táctiles.
+
+   Estos comentarios se dejan aquí como guía para próximas iteraciones.
+   ============================================================ */
 </script>
 <script>
 /* ============================================================
@@ -3309,6 +3418,47 @@ ui.importAllInput.addEventListener("change", (e) => {
   e.target.value = "";
 });
 ui.wipeBtn.addEventListener("click", wipeEverything);
+
+function showMoreMenu(){
+  ui.moreMenu.classList.add("on");
+  ui.moreMenu.setAttribute("aria-hidden", "false");
+}
+function hideMoreMenu(){
+  ui.moreMenu.classList.remove("on");
+  ui.moreMenu.setAttribute("aria-hidden", "true");
+}
+function toggleMoreMenu(){
+  if(ui.moreMenu.classList.contains("on")) hideMoreMenu();
+  else showMoreMenu();
+}
+
+ui.moreBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  toggleMoreMenu();
+});
+
+// Close menu when clicking outside
+window.addEventListener("click", (e) => {
+  if(!ui.moreMenu.classList.contains("on")) return;
+  if(e.target === ui.moreBtn || ui.moreMenu.contains(e.target)) return;
+  hideMoreMenu();
+});
+
+// Close menu with Esc
+window.addEventListener("keydown", (e) => {
+  if(e.key === "Escape") hideMoreMenu();
+});
+
+ui.moreNewsBtn.addEventListener("click", async () => {
+  hideMoreMenu();
+  await renderNewsPanel();
+  setUpdateBanner();
+  ui.newsDialog.showModal();
+  ui.newsWrap.scrollTop = 0;
+});
+ui.moreExportAllBtn.addEventListener("click", () => { hideMoreMenu(); exportAll(); });
+ui.moreImportAllBtn.addEventListener("click", () => { hideMoreMenu(); ui.importAllInput.click(); });
+ui.moreWipeBtn.addEventListener("click", () => { hideMoreMenu(); wipeEverything(); });
 
 /* Exam */
 ui.examToggleBtn.addEventListener("click", () => {
