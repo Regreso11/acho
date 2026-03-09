@@ -1,6 +1,30 @@
 {
   "items": [
     {
+      "id": "2026-03-09-update-button-fix",
+      "title": "Botón 'Actualizar ahora' arreglado",
+      "body": "El botón de actualización ahora funciona incluso si el service worker ya no está en 'waiting'. La app aplica la nueva versión y recarga automáticamente.",
+      "createdAt": "9 de marzo de 2026"
+    },
+    {
+      "id": "2026-03-09-mas-menu",
+      "title": "Nuevo menú '⋯ Más'",
+      "body": "Las funciones de noticias, exportar/importar y borrar todo ahora están en un solo menú para dejar la barra principal más limpia.",
+      "createdAt": "9 de marzo de 2026"
+    },
+    {
+      "id": "2026-03-09-welcome-cleanup",
+      "title": "Pantalla de bienvenida más limpia",
+      "body": "Se eliminó el botón 'Crear primer mazo' para que la primera experiencia sea más clara y enfocada en comenzar a estudiar.",
+      "createdAt": "9 de marzo de 2026"
+    },
+    {
+      "id": "2026-03-09-news-badge",
+      "title": "Contador de novedades no leídas",
+      "body": "Verás un número en el botón '⋯ Más' cuando haya novedades sin ver, y al abrir el menú se muestra el contador junto a 'Novedades'.",
+      "createdAt": "9 de marzo de 2026"
+    },
+    {
       "id": "2026-03-05-news-panel",
       "title": "Panel de Novedades",
       "body": "Ahora puedes ver cambios y avisos dentro de la app desde el panel de Novedades.\n\nTip: si ves algo marcado como “Nuevo”, significa que todavía no lo habías visto.",
