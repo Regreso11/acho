@@ -762,6 +762,8 @@
           <div class="actions" style="gap:8px;">
             <button class="btn" id="proSelectBtn">✅ Seleccionar</button>
             <button class="btn good" id="proDuplicateSelectedBtn" disabled>🧬 Duplicar</button>
+            <button class="btn" id="proMoveSelectedBtn" disabled>📤 Enviar</button>
+            <button class="btn danger" id="proDeleteSelectedBtn" disabled>🗑️ Borrar</button>
             <button class="btn" id="proHintBtn">💡 Hint</button>
             <button class="btn" id="proPancakesBtn">🥞 Pancakes 🥞</button>
             <button class="btn danger flat" id="proExitBtn">⛔ Salir</button>
@@ -838,6 +840,24 @@
       </div>
 
       <div class="hint">Cada mazo es independiente. Puedes exportar/importar por mazo o todo junto.</div>
+    </div>
+  </dialog>
+
+  <!-- Dialog: Move cards -->
+  <dialog id="moveDialog">
+    <div class="dlg">
+      <div class="head">
+        <h3>📤 Mover tarjetas</h3>
+        <button class="btn flat" id="closeMoveDlg">✖</button>
+      </div>
+
+      <div class="hint" id="moveHint">Selecciona un mazo destino.</div>
+      <div class="deckList" id="moveDeckList"></div>
+
+      <div class="row" style="justify-content:flex-end;">
+        <button class="btn" id="cancelMoveDlg">Cancelar</button>
+        <button class="btn primary" id="confirmMoveBtn">📤 Mover</button>
+      </div>
     </div>
   </dialog>
 
@@ -1098,6 +1118,8 @@ const ui = {
   proShowAll: document.getElementById("proShowAll"),
   proSelectBtn: document.getElementById("proSelectBtn"),
   proDuplicateSelectedBtn: document.getElementById("proDuplicateSelectedBtn"),
+  proMoveSelectedBtn: document.getElementById("proMoveSelectedBtn"),
+  proDeleteSelectedBtn: document.getElementById("proDeleteSelectedBtn"),
   proHintBtn: document.getElementById("proHintBtn"),
   proPancakesBtn: document.getElementById("proPancakesBtn"),
 
@@ -1116,6 +1138,14 @@ const ui = {
   newDeckName: document.getElementById("newDeckName"),
   createDeckBtn: document.getElementById("createDeckBtn"),
   deckList: document.getElementById("deckList"),
+
+  // Move cards dialog
+  moveDialog: document.getElementById("moveDialog"),
+  moveDeckList: document.getElementById("moveDeckList"),
+  moveHint: document.getElementById("moveHint"),
+  closeMoveDlg: document.getElementById("closeMoveDlg"),
+  cancelMoveDlg: document.getElementById("cancelMoveDlg"),
+  confirmMoveBtn: document.getElementById("confirmMoveBtn"),
 
   // Exam choice + multi
   examChoiceDialog: document.getElementById("examChoiceDialog"),
@@ -1455,14 +1485,23 @@ function setProPills(){
 
 function setProSelectMode(on){
   app.view.proSelectMode = !!on;
-  if(!on) app.view.proSelectedIds.clear();
+
+  if(!on){
+    app.view.proSelectedIds.clear();
+    // Asegura que los checkboxes se desmarquen (no depende de re-render)
+    ui.proGrid.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+  }
 
   ui.proGridWrap.classList.toggle("proSelectMode", app.view.proSelectMode);
   ui.proSelectBtn.textContent = app.view.proSelectMode ? "❎ Salir selección" : "✅ Seleccionar";
-  ui.proDuplicateSelectedBtn.disabled = !(app.view.proSelectMode && app.view.proSelectedIds.size > 0);
+
+  const hasSelection = app.view.proSelectMode && app.view.proSelectedIds.size > 0;
+  ui.proDuplicateSelectedBtn.disabled = !hasSelection;
+  ui.proMoveSelectedBtn.disabled = !hasSelection;
+  ui.proDeleteSelectedBtn.disabled = !hasSelection;
 
   ui.proHintLine.textContent = app.view.proSelectMode
-    ? "Selección activa: marca tarjetas y pulsa “Duplicar”."
+    ? "Selección activa: marca tarjetas y usa los botones para duplicar, mover o borrar."
     : "Arrastra (PC) o mantén pulsado (móvil). Si te quedas 2s aparece un cupo (no definitivo).";
 }
 
@@ -1569,6 +1608,15 @@ function renderProBase(){
         proDuplicateByIndexes([i]);
       });
 
+      const move = document.createElement("button");
+      move.className = "iconBtn";
+      move.textContent = "📤";
+      move.title = "Mover tarjeta a otro mazo";
+      move.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        proMoveSingle(c.id);
+      });
+
       const del = document.createElement("button");
       del.className = "iconBtn del";
       del.textContent = "🗑️";
@@ -1579,6 +1627,7 @@ function renderProBase(){
       });
 
       left.appendChild(dup);
+      left.appendChild(move);
       left.appendChild(del);
 
       const right = document.createElement("div");
@@ -1660,6 +1709,141 @@ function proDuplicateSelected(){
   const idxs = ids.map(id=>map.get(id)).filter(i=>typeof i === "number");
   proDuplicateByIndexes(idxs);
   setProSelectMode(false);
+}
+
+function proDeleteSelected(){
+  const deck = getDeck();
+  if(!deck || !deck.cards) return;
+  const ids = [...app.view.proSelectedIds];
+  if(!ids.length) return;
+  if(!confirm(`¿Borrar ${ids.length} tarjeta(s)?`)) return;
+
+  const toRemove = new Set(ids);
+  deck.cards = deck.cards.filter(c => !toRemove.has(c.id));
+  saveStore();
+  toast(`🗑️ ${ids.length} borrada(s)`, 1200);
+  setProSelectMode(false);
+  render();
+}
+
+function openMoveDialog(mode, cardId=null){
+  app.view.proMoveContext = { mode, cardId };
+  const deck = getDeck();
+  if(!deck){ toast("⚠️ No hay mazo", 1400); return; }
+
+  const decks = app.data.decks.filter(d => d.id !== deck.id);
+  ui.moveDeckList.innerHTML = "";
+
+  if(!decks.length){
+    const empty = document.createElement("div");
+    empty.className = "hint";
+    empty.textContent = "No hay otros mazos. Crea uno primero.";
+    ui.moveDeckList.appendChild(empty);
+    ui.confirmMoveBtn.disabled = true;
+  }else{
+    let selectedId = decks[0].id;
+
+    decks.forEach((d, idx) => {
+      const row = document.createElement("div");
+      row.className = "deckItem";
+
+      const left = document.createElement("div");
+      left.className = "name";
+      left.innerHTML = `<strong>${escapeHTML(d.name)}</strong><span>${(d.cards||[]).length} tarjeta(s)</span>`;
+
+      const ops = document.createElement("div");
+      ops.className = "ops";
+
+      const label = document.createElement("label");
+      label.style.display = "inline-flex";
+      label.style.alignItems = "center";
+      label.style.gap = "8px";
+      label.style.cursor = "pointer";
+
+      const rb = document.createElement("input");
+      rb.type = "radio";
+      rb.name = "moveDest";
+      rb.value = d.id;
+      rb.checked = idx === 0;
+      rb.addEventListener("change", () => {
+        if(rb.checked) selectedId = d.id;
+      });
+
+      label.appendChild(rb);
+      label.appendChild(document.createTextNode("Destino"));
+      ops.appendChild(label);
+
+      row.appendChild(left);
+      row.appendChild(ops);
+      ui.moveDeckList.appendChild(row);
+    });
+
+    ui.confirmMoveBtn.disabled = false;
+    ui.confirmMoveBtn.dataset.selectedDest = selectedId;
+  }
+
+  ui.moveHint.textContent = mode === "single"
+    ? "Elige un mazo destino para esta tarjeta."
+    : "Elige un mazo destino para las tarjetas seleccionadas.";
+
+  ui.moveDialog.showModal();
+}
+
+function proMoveSingle(cardId){
+  openMoveDialog("single", cardId);
+}
+
+function proMoveSelected(){
+  if(!app.view.proSelectedIds.size){
+    toast("⚠️ Selecciona tarjetas primero", 1400);
+    return;
+  }
+  openMoveDialog("multi", null);
+}
+
+function proConfirmMove(){
+  const deck = getDeck();
+  if(!deck) return;
+
+  const destInput = ui.moveDeckList.querySelector('input[name="moveDest"]:checked');
+  if(!destInput){
+    toast("⚠️ Elige un mazo destino", 1400);
+    return;
+  }
+
+  const destId = destInput.value;
+  const destDeck = app.data.decks.find(d => d.id === destId);
+  if(!destDeck){
+    toast("⚠️ Mazo destino no encontrado", 1400);
+    return;
+  }
+
+  const ctx = app.view.proMoveContext || {};
+  const ids = ctx.mode === "single" && ctx.cardId ? [ctx.cardId] : [...app.view.proSelectedIds];
+  if(!ids.length){
+    toast("⚠️ Sin tarjetas para mover", 1400);
+    ui.moveDialog.close();
+    return;
+  }
+
+  const toMove = [];
+  const toMoveSet = new Set(ids);
+  deck.cards = deck.cards.filter(c => {
+    if(toMoveSet.has(c.id)){
+      toMove.push(c);
+      return false;
+    }
+    return true;
+  });
+
+  destDeck.cards.push(...toMove);
+  saveStore();
+
+  toast(`📦 ${toMove.length} movida(s)`, 1200);
+  ui.moveDialog.close();
+
+  if(ctx.mode === "multi") setProSelectMode(false);
+  render();
 }
 
 /* =========================
@@ -2551,6 +2735,15 @@ renderProBase = function renderProBase_DnD(){
         proDuplicateByIndexes([i]);
       });
 
+      const move = document.createElement("button");
+      move.className = "iconBtn";
+      move.textContent = "📤";
+      move.title = "Mover tarjeta a otro mazo";
+      move.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        proMoveSingle(c.id);
+      });
+
       const del = document.createElement("button");
       del.className = "iconBtn del";
       del.textContent = "🗑️";
@@ -2561,6 +2754,7 @@ renderProBase = function renderProBase_DnD(){
       });
 
       left.appendChild(dup);
+      left.appendChild(move);
       left.appendChild(del);
 
       const right = document.createElement("div");
@@ -3204,6 +3398,12 @@ ui.updateViewNewsBtn.addEventListener("click", async () => {
 /* Pro controls */
 ui.proSelectBtn.addEventListener("click", () => setProSelectMode(!app.view.proSelectMode));
 ui.proDuplicateSelectedBtn.addEventListener("click", proDuplicateSelected);
+ui.proMoveSelectedBtn.addEventListener("click", proMoveSelected);
+ui.proDeleteSelectedBtn.addEventListener("click", proDeleteSelected);
+
+ui.closeMoveDlg.addEventListener("click", () => ui.moveDialog.close());
+ui.cancelMoveDlg.addEventListener("click", () => ui.moveDialog.close());
+ui.confirmMoveBtn.addEventListener("click", proConfirmMove);
 
 ui.proHintBtn.addEventListener("click", proDevMsg);
 ui.proPancakesBtn.addEventListener("click", proDevMsg);
