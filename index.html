@@ -3267,7 +3267,17 @@ function maybeShowPostUpdateOverlay(){
 async function applyPendingUpdate(){
   // Re-check registration in case we lost the reference to the waiting worker.
   const reg = window._swReg || (navigator.serviceWorker ? await navigator.serviceWorker.getRegistration() : null);
-  const waiting = reg?.waiting || reg?.installing;
+  if(!reg){
+    toast("No hay actualización pendiente", 1600);
+    return;
+  }
+
+  // Si no tenemos nada esperando, forzamos un chequeo rápido.
+  if(!reg.waiting && !reg.installing){
+    await reg.update().catch(()=>{});
+  }
+
+  const waiting = reg.waiting || reg.installing;
   if(!waiting){
     toast("No hay actualización pendiente", 1600);
     return;
