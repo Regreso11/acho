@@ -86,7 +86,41 @@
 
     .hideOnMobile{ display: inline-flex; }
 
-    .moreBtn{ min-width: 40px; justify-content: center; }
+    .moreBtn{ min-width: 40px; justify-content: center; position: relative; }
+    .moreBadge{
+      display: none;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 6px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      background: var(--danger);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      display: inline-flex;
+    }
+    .moreBtn.has-badge .moreBadge{ display: inline-flex; }
+
+    .moreNewsBadge{
+      display: none;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 6px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      background: var(--danger);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      display: inline-flex;
+      margin-left: 6px;
+    }
 
     .moreMenu{
       position: absolute;
@@ -707,26 +741,21 @@
         <button class="btn primary" id="examToggleBtn" title="Modo examen">🧪 Examen</button>
         <button class="btn" id="proBtn" title="Edición Pro">🧰 Edición Pro</button>
 
-        <button class="btn hideOnMobile" id="newsBtn" title="Novedades">📰 Novedades</button>
-        <button class="btn hideOnMobile" id="exportAllBtn" title="Exportar todo">⬇️ Exportar todo</button>
-
-        <span class="btn hideOnMobile" title="Importar todo" style="position:relative; overflow:hidden;">
-          ⬆️ Importar todo
-          <input type="file" id="importAllInput"
-                 style="position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;">
-        </span>
-
-        <button class="btn danger flat hideOnMobile" id="wipeBtn" title="Borrar TODO del navegador">🧨 Borrar todo</button>
-
-        <button class="btn flat moreBtn" id="moreBtn" title="Más">⋯</button>
+        <button class="btn flat moreBtn" id="moreBtn" title="Más">
+          ⋯
+          <span class="moreBadge" id="moreBadge" aria-hidden="true"></span>
+        </button>
       </div>
 
       <div class="moreMenu" id="moreMenu" aria-hidden="true">
-        <button class="btn" id="moreNewsBtn">📰 Novedades</button>
+        <button class="btn" id="moreNewsBtn">📰 Novedades <span class="moreNewsBadge" id="moreNewsBadge" aria-hidden="true"></span></button>
         <button class="btn" id="moreExportAllBtn">⬇️ Exportar todo</button>
         <button class="btn" id="moreImportAllBtn">⬆️ Importar todo</button>
         <button class="btn danger" id="moreWipeBtn">🧨 Borrar todo</button>
       </div>
+
+      <input type="file" id="importAllInput" accept="application/json" hidden>
+
     </div>
 
     <section class="panel welcome" id="welcomeView">
@@ -736,7 +765,6 @@
 
       <div class="row">
         <button class="btn primary" id="enterBtn">🚀 Empezar</button>
-        <button class="btn" id="quickDeckBtn">➕ Crear primer mazo</button>
       </div>
 
       <div class="hint" style="margin-top:12px;">
@@ -1126,7 +1154,6 @@ const ui = {
   proView: document.getElementById("proView"),
 
   enterBtn: document.getElementById("enterBtn"),
-  quickDeckBtn: document.getElementById("quickDeckBtn"),
 
   statusLine: document.getElementById("statusLine"),
   deckTag: document.getElementById("deckTag"),
@@ -1148,12 +1175,13 @@ const ui = {
   proBtn: document.getElementById("proBtn"),
   exportDeckBtn: document.getElementById("exportDeckBtn"),
   importDeckInput: document.getElementById("importDeckInput"),
-  exportAllBtn: document.getElementById("exportAllBtn"),
   importAllInput: document.getElementById("importAllInput"),
-  wipeBtn: document.getElementById("wipeBtn"),
+  // legacy export/wipe buttons removed from topbar, use more menu instead
   moreBtn: document.getElementById("moreBtn"),
+  moreBadge: document.getElementById("moreBadge"),
   moreMenu: document.getElementById("moreMenu"),
   moreNewsBtn: document.getElementById("moreNewsBtn"),
+  moreNewsBadge: document.getElementById("moreNewsBadge"),
   moreExportAllBtn: document.getElementById("moreExportAllBtn"),
   moreImportAllBtn: document.getElementById("moreImportAllBtn"),
   moreWipeBtn: document.getElementById("moreWipeBtn"),
@@ -1232,7 +1260,6 @@ const ui = {
   anotherExamBtn: document.getElementById("anotherExamBtn"),
 
   // News
-  newsBtn: document.getElementById("newsBtn"),
   newsDialog: document.getElementById("newsDialog"),
   newsWrap: document.getElementById("newsWrap"),
   closeNewsDlg: document.getElementById("closeNewsDlg"),
@@ -2383,6 +2410,8 @@ async function maybeShowNewsPopupOnce(){
   state.popupShownForId = newest.id;
   saveNewsState(state);
 
+  await updateNewsBadges(items, state);
+
   ui.newsPopupText.textContent = newest.title || "Novedad nueva";
   ui.newsPopup.style.display = "block";
   ui.newsPopup.classList.add("on");
@@ -2415,6 +2444,34 @@ async function renderNewsPanel(){
       <div class="smallMuted">${escapeHTML(it.body || "")}</div>
     `;
     ui.newsList.appendChild(box);
+  }
+
+  updateNewsBadges(items, state);
+}
+
+async function updateNewsBadges(items, state){
+  const menuOpen = ui.moreMenu.classList.contains("on");
+
+  if(!items || !state){
+    items = items || await getNewsItems();
+    state = state || loadNewsState();
+  }
+
+  const unseen = items.filter(it => !state.seenIds[it.id]).length;
+  const hasUnseen = unseen > 0;
+
+  if(hasUnseen){
+    ui.moreBadge.textContent = String(unseen);
+    ui.moreBtn.classList.toggle("has-badge", !menuOpen);
+
+    ui.moreNewsBadge.textContent = String(unseen);
+    ui.moreNewsBadge.style.display = menuOpen ? "inline-flex" : "none";
+  }else{
+    ui.moreBadge.textContent = "";
+    ui.moreBtn.classList.remove("has-badge");
+
+    ui.moreNewsBadge.textContent = "";
+    ui.moreNewsBadge.style.display = "none";
   }
 }
 
@@ -3207,13 +3264,16 @@ function maybeShowPostUpdateOverlay(){
   overlayShow();
 }
 
-function applyPendingUpdate(){
-  const reg = window._swReg;
-  if(!reg || !reg.waiting){
+async function applyPendingUpdate(){
+  // Re-check registration in case we lost the reference to the waiting worker.
+  const reg = window._swReg || (navigator.serviceWorker ? await navigator.serviceWorker.getRegistration() : null);
+  const waiting = reg?.waiting || reg?.installing;
+  if(!waiting){
     toast("No hay actualización pendiente", 1600);
     return;
   }
- sessionStorage.setItem("es_user_initiated_update", "1");
+
+  sessionStorage.setItem("es_user_initiated_update", "1");
   ui.updateOverlayTitle.textContent = "✨ Actualizando";
   overlaySet("applying", "Aplicando la actualización…");
   ui.updateNowBtn.style.display = "none";
@@ -3223,7 +3283,18 @@ function applyPendingUpdate(){
   overlayShow();
 
   sessionStorage.setItem(UPDATE_JUST_APPLIED_KEY, "1");
-  reg.waiting.postMessage({ type: "SKIP_WAITING" });
+
+  const currentController = navigator.serviceWorker.controller;
+  waiting.postMessage({ type: "SKIP_WAITING" });
+
+  // Fallback: if controllerchange doesn't fire, reload after a short delay.
+  setTimeout(() => {
+    if(sessionStorage.getItem("es_user_initiated_update") !== "1") return;
+    if(navigator.serviceWorker.controller === currentController){
+      sessionStorage.removeItem("es_user_initiated_update");
+      window.location.reload();
+    }
+  }, 4500);
 }
 
 async function checkForUpdatesLight(reason){
@@ -3346,11 +3417,6 @@ ui.enterBtn.addEventListener("click", () => {
   toast("📚 Listo", 1100);
   maybeShowNewsPopupOnce();
 });
-ui.quickDeckBtn.addEventListener("click", () => {
-  ensureDeck();
-  showStudy();
-  openDecks();
-});
 
 /* Deck dialog */
 ui.decksBtn.addEventListener("click", openDecks);
@@ -3411,21 +3477,21 @@ ui.importDeckInput.addEventListener("change", (e) => {
   if(f) importIntoCurrentDeck(f);
   e.target.value = "";
 });
-ui.exportAllBtn.addEventListener("click", exportAll);
 ui.importAllInput.addEventListener("change", (e) => {
   const f = e.target.files?.[0];
   if(f) importAll(f);
   e.target.value = "";
 });
-ui.wipeBtn.addEventListener("click", wipeEverything);
 
 function showMoreMenu(){
   ui.moreMenu.classList.add("on");
   ui.moreMenu.setAttribute("aria-hidden", "false");
+  updateNewsBadges().catch(()=>{});
 }
 function hideMoreMenu(){
   ui.moreMenu.classList.remove("on");
   ui.moreMenu.setAttribute("aria-hidden", "true");
+  updateNewsBadges().catch(()=>{});
 }
 function toggleMoreMenu(){
   if(ui.moreMenu.classList.contains("on")) hideMoreMenu();
@@ -3501,12 +3567,6 @@ ui.resumeStudyBtn.addEventListener("click", closeSummaryAndGoStudy);
 ui.anotherExamBtn.addEventListener("click", closeSummaryAndStartNewExam);
 
 /* News */
-ui.newsBtn.addEventListener("click", async () => {
-  await renderNewsPanel();
-  setUpdateBanner();
-  ui.newsDialog.showModal();
-  ui.newsWrap.scrollTop = 0;
-});
 ui.closeNewsDlg.addEventListener("click", () => ui.newsDialog.close());
 ui.newsPopupViewBtn.addEventListener("click", async () => {
   hideNewsPopup();
@@ -3589,6 +3649,7 @@ ui.summaryDialog.addEventListener("cancel", (e) => e.preventDefault());
    INIT
    ============================================================ */
 loadStore();
+updateNewsBadges().catch(()=>{});
 showWelcome();
 ensureDeck();
 maybeShowPostUpdateOverlay();
