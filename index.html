@@ -102,7 +102,6 @@
       color: #fff;
       align-items: center;
       justify-content: center;
-      display: inline-flex;
     }
     .moreBtn.has-badge .moreBadge{ display: inline-flex; }
 
@@ -118,7 +117,6 @@
       color: #fff;
       align-items: center;
       justify-content: center;
-      display: inline-flex;
       margin-left: 6px;
     }
 
@@ -502,6 +500,18 @@
 
       overflow:hidden; /* protege footer */
     }
+/* PRO: anti-select while dragging (evita seleccionar texto en tablets) */
+.proCard, .proCard *{
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+body.proDragging, body.proDragging *{
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
     .proCard:active{ cursor: grabbing; }
 
     .proCard .idx{
@@ -1588,15 +1598,19 @@ function setProSelectMode(on){
   ui.proGridWrap.classList.toggle("proSelectMode", app.view.proSelectMode);
   ui.proSelectBtn.textContent = app.view.proSelectMode ? "❎ Salir selección" : "✅ Seleccionar";
 
-  const hasSelection = app.view.proSelectMode && app.view.proSelectedIds.size > 0;
-  ui.proDuplicateSelectedBtn.disabled = !hasSelection;
-  ui.proMoveSelectedBtn.disabled = !hasSelection;
-  ui.proDeleteSelectedBtn.disabled = !hasSelection;
+  updateProSelectionButtons();
 
   ui.proHintLine.textContent = app.view.proSelectMode
     ? "Selección activa: marca tarjetas y usa los botones para duplicar, mover o borrar."
     : "Arrastra (PC) o mantén pulsado (móvil). Si te quedas 2s aparece un cupo (no definitivo).";
+
+  updateProSelectionButtons();
 }
+
+function updateProSelectionButtons(){
+  updateProSelectionButtons();
+}
+
 
 /* Placeholder FLIP (se reemplaza en PARTE 3 por FLIP real) */
 function proFLIPRender(renderFn){ renderFn(); }
@@ -1652,7 +1666,7 @@ function renderProBase(){
         e.stopPropagation();
         if(cb.checked) selected.add(c.id);
         else selected.delete(c.id);
-        ui.proDuplicateSelectedBtn.disabled = !(app.view.proSelectMode && selected.size > 0);
+        updateProSelectionButtons();
       });
       sel.appendChild(cb);
       el.appendChild(sel);
@@ -1719,7 +1733,13 @@ function renderProBase(){
         proDeleteOne(i);
       });
 
-      left.appendChild(dup);
+      
+      
+      // En modo selección, desactiva los botones por tarjeta para evitar acciones accidentales
+      if(app.view.proSelectMode){ dup.disabled = true; move.disabled = true; del.disabled = true; }
+// En modo selección, desactiva los botones por tarjeta para evitar acciones accidentales
+      if(app.view.proSelectMode){ dup.disabled = true; move.disabled = true; del.disabled = true; }
+left.appendChild(dup);
       left.appendChild(move);
       left.appendChild(del);
 
@@ -1746,7 +1766,7 @@ function renderProBase(){
     ui.proGrid.innerHTML = "";
     ui.proGrid.appendChild(frag);
 
-    ui.proDuplicateSelectedBtn.disabled = !(app.view.proSelectMode && selected.size > 0);
+    updateProSelectionButtons();
   };
 
   proFLIPRender(doRender);
@@ -1812,9 +1832,11 @@ function proDeleteSelected(){
   if(!confirm(`¿Borrar ${ids.length} tarjeta(s)?`)) return;
 
   const toRemove = new Set(ids);
+  const before = deck.cards.length;
   deck.cards = deck.cards.filter(c => !toRemove.has(c.id));
+  const removedCount = before - deck.cards.length;
   saveStore();
-  toast(`🗑️ ${ids.length} borrada(s)`, 1200);
+  toast(`🗑️ ${removedCount} borrada(s)`, 1200);
   setProSelectMode(false);
   render();
 }
@@ -2642,6 +2664,7 @@ function proDevMsg(){
    ============================================================ */
 </script>
 <script>
+  
 /* ============================================================
    PRO: FLIP real + Drag & Drop multi-dispositivo + Cupo NO definitivo
    ============================================================ */
@@ -2852,7 +2875,7 @@ renderProBase = function renderProBase_DnD(){
         e.stopPropagation();
         if(cb.checked) selected.add(c.id);
         else selected.delete(c.id);
-        ui.proDuplicateSelectedBtn.disabled = !(app.view.proSelectMode && selected.size > 0);
+        updateProSelectionButtons();
       });
       sel.appendChild(cb);
       el.appendChild(sel);
@@ -2919,7 +2942,13 @@ renderProBase = function renderProBase_DnD(){
         proDeleteOne(i);
       });
 
-      left.appendChild(dup);
+      
+      
+      // En modo selección, desactiva los botones por tarjeta para evitar acciones accidentales
+      if(app.view.proSelectMode){ dup.disabled = true; move.disabled = true; del.disabled = true; }
+// En modo selección, desactiva los botones por tarjeta para evitar acciones accidentales
+      if(app.view.proSelectMode){ dup.disabled = true; move.disabled = true; del.disabled = true; }
+left.appendChild(dup);
       left.appendChild(move);
       left.appendChild(del);
 
@@ -2944,7 +2973,7 @@ renderProBase = function renderProBase_DnD(){
     ui.proGrid.innerHTML = "";
     ui.proGrid.appendChild(frag);
 
-    ui.proDuplicateSelectedBtn.disabled = !(app.view.proSelectMode && selected.size > 0);
+    updateProSelectionButtons();
   };
 
   proFLIPRender(doRender);
@@ -2998,6 +3027,8 @@ function proOnDownTouch(e){
 }
 
 function proOnDown(e){
+  // Evita selección de texto / gestos de selección en tablets
+  if(e && typeof e.preventDefault === "function") e.preventDefault();
   if(app.view.mode !== "pro") return;
   if(app.view.proSelectMode) return;
 
@@ -3033,6 +3064,7 @@ function proOnDown(e){
   clearTimeout(d.intentT);
   d.longPressT = null;
   d.intentT = null;
+  try{ if(target.setPointerCapture && (e.pointerId != null)) target.setPointerCapture(e.pointerId); }catch{}
 
   const longPressMs = (e.pointerType === "mouse" || INPUT.mode === "mouse") ? 0 : INPUT.longPressMs;
   if(longPressMs === 0){
@@ -3041,11 +3073,11 @@ function proOnDown(e){
     d.longPressT = setTimeout(()=>proStartDrag(), longPressMs);
   }
 
-  window.addEventListener("pointermove", proOnMove, { passive: true });
+  window.addEventListener("pointermove", proOnMove, { passive: false });
   window.addEventListener("pointerup", proOnUp, { passive: true });
   window.addEventListener("pointercancel", proOnUp, { passive: true });
 
-  window.addEventListener("touchmove", proOnMoveTouch, { passive: true });
+  window.addEventListener("touchmove", proOnMoveTouch, { passive: false });
   window.addEventListener("touchend", proOnUp, { passive: true });
   window.addEventListener("touchcancel", proOnUp, { passive: true });
 }
@@ -3061,6 +3093,7 @@ function proStartDrag(){
   }
 
   d.active = true;
+  document.body.classList.add("proDragging");
 
   const deck = getDeck();
   const card = deck?.cards?.find(c=>c.id === d.cardId);
@@ -3081,18 +3114,18 @@ function proStartDrag(){
 }
 
 function proOnMoveTouch(ev){
+  if(app.view.proDrag.active && ev && typeof ev.preventDefault === "function" && ev.cancelable) ev.preventDefault();
   const t = ev.touches && ev.touches[0];
   if(!t) return;
-  proOnMove({ clientX: t.clientX, clientY: t.clientY });
+  proOnMove({ clientX: t.clientX, clientY: t.clientY, preventDefault: () => {}, cancelable: false });
 }
 
 function proOnMove(ev){
   const d = app.view.proDrag;
+  if(d.active && ev && typeof ev.preventDefault === "function" && ev.cancelable) ev.preventDefault();
   if(!d.pressed) return;
-
   d.x = ev.clientX;
   d.y = ev.clientY;
-
   // si no está activo: cancela longpress si se movió mucho
   if(!d.active){
     const dx = Math.abs(d.x - d.startX);
@@ -3103,26 +3136,20 @@ function proOnMove(ev){
     }
     return;
   }
-
   proMirrorMove(d.x, d.y);
   proAutoScroll(d.y);
-
   const insertIndex = proComputeInsertionIndex(d.x, d.y);
-
   // cambio de hueco => reinicia (cupo NO definitivo)
   if(insertIndex !== d.lastInsertIndex){
     d.lastInsertIndex = insertIndex;
     d.stableInsertIndex = insertIndex;
-
     if(d.placeholderIndex != null){
       d.placeholderIndex = null;
       renderProBase();
     }
-
     clearTimeout(d.intentT);
     d.intentT = null;
-
-    d.intentT = setTimeout(()=>{
+    d.intentT = setTimeout(() => {
       const dd = app.view.proDrag;
       if(!dd.active) return;
       if(dd.stableInsertIndex !== insertIndex) return;
@@ -3147,6 +3174,7 @@ function proOnUp(){
 
   clearTimeout(d.longPressT); d.longPressT = null;
   clearTimeout(d.intentT); d.intentT = null;
+  try{ if(target.setPointerCapture && (e.pointerId != null)) target.setPointerCapture(e.pointerId); }catch{}
 
   proCleanupGlobal();
 
@@ -3159,6 +3187,7 @@ function proOnUp(){
   }
 
   proMirrorHide();
+  document.body.classList.remove("proDragging");
 
   d.pressed = false;
   d.active = false;
