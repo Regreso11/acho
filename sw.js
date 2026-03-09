@@ -11,15 +11,16 @@ const CORE_ASSETS = [
 
 // Install: precache básico + activar rápido
 self.addEventListener("install", (event) => {
-  event.waitUntil((async () => {
+  
+event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
 
-    // Pedir "reload" para evitar copias viejas del navegador
     await Promise.all(
       CORE_ASSETS.map(async (url) => {
         const req = new Request(url, { cache: "reload" });
         const res = await fetch(req);
         await cache.put(url, res);
+
       })
     );
 
@@ -92,6 +93,5 @@ async function cacheFirst(req) {
   cache.put(req, fresh.clone());
   return fresh;
 }
-
 
 
