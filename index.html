@@ -2910,7 +2910,7 @@ function applyPendingUpdate(){
     toast("No hay actualización pendiente", 1600);
     return;
   }
-
+ sessionStorage.setItem("es_user_initiated_update", "1");
   ui.updateOverlayTitle.textContent = "✨ Actualizando";
   overlaySet("applying", "Aplicando la actualización…");
   ui.updateNowBtn.style.display = "none";
@@ -2960,6 +2960,7 @@ function wireServiceWorker(){
 
       setUpdateBanner();
 
+      // Si ya hay update esperando, lo reflejamos (banner/overlay según tu lógica)
       if(reg.waiting){
         maybeShowWaitingOverlay("Hay una actualización lista.");
       }
@@ -2990,8 +2991,21 @@ function wireServiceWorker(){
         });
       });
 
+      // ✅ CAMBIO CLAVE:
+      // Solo recargar si el usuario inició la actualización.
       let reloading = false;
       navigator.serviceWorker.addEventListener("controllerchange", () => {
+        const userInitiated = sessionStorage.getItem("es_user_initiated_update") === "1";
+
+        if(!userInitiated){
+          // No recargamos: evita que el overlay “se vaya solo”
+          console.log("controllerchange sin acción del usuario -> no recargo");
+          return;
+        }
+
+        // Limpia flag para próximas veces
+        sessionStorage.removeItem("es_user_initiated_update");
+
         if(reloading) return;
         reloading = true;
         window.location.reload();
@@ -3009,9 +3023,12 @@ function wireServiceWorker(){
 
       tryRegisterPeriodicSync(reg);
 
+      // primer check
       reg.update().catch(()=>{});
       setUpdateBanner();
-    }catch{}
+    }catch{
+      // ignore
+    }
   });
 }
 
